@@ -21,6 +21,7 @@ engine = create_engine(
 )
 
 if __name__ == "__main__":
+    # comes back with 3.56.4 and many warnings for me
     try:
         connection = engine.connect()
         results = connection.execute('select current_version()').fetchone()

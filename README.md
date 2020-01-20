@@ -26,3 +26,17 @@ Just practice, not real production - you should buy a tool.
 ### Metadata Design
 
 The metadata is designed for [the TEAM metadata of Roelant Vos](https://github.com/RoelantVos/TEAM)
+
+### Notes on the Code
+
+written for python 3.7
+install the requirements
+for tests, there should be a sqlite version
+
+### How to use this
+
+1. Prepare input data
+2. Establish connection to Snowflake
+3. generate create table statements for stg
+4. combine into create table script
+
