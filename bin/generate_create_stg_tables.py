@@ -3,6 +3,7 @@ import glob
 from jinja2 import FileSystemLoader, Environment
 from csv import DictReader
 
+
 # for testing
 sample_csv_data = '''
 tableA,colX,NUMBER,YES,,
@@ -19,27 +20,10 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 tabdef_file_pattern = os.path.join(parent_dir, 'input', 'table_definitions', '*.csv')
 
 # output dir
-output_file = os.path.join(parent_dir, 'output', 'create_staging_tables.py')
+output_file = os.path.join(parent_dir, 'create_staging_tables.py')
 create_staging_tables_intro = '''
-from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, insert, sql, Sequence, Boolean, exc
-import configparser
+from sqlalchemy import MetaData, Table, Integer, String, Column, Boolean
 
-# connect
-config = configparser.ConfigParser()
-config.read('./conf/config.ini')
-
-engine = create_engine(
-    'snowflake://{user}:{password}@{account}/{database}/{schema}?warehouse={warehouse}'.format(
-        user=config['db_credentials']['user'],
-        password=config['db_credentials']['password'],
-        account=config['db_connection']['account'],
-        database=config['db_connection']['database'],
-        schema=config['db_connection']['schema'],
-        warehouse=config['db_connection']['warehouse']
-    )
-)
-
-# results = connection.execute('select current_version()').fetchone()
 
 def create_stage_tables(eng):
     # Some sample tables, without foreign keys
@@ -50,7 +34,13 @@ create_staging_tables_outro = '''
 
 
 if __name__ == "__main__":
+    from bin import connect_snowflake
+    import os
+    basedir = os.path.dirname(os.path.abspath(__file__))
+    configfile = os.path.join(basedir, 'conf', 'config.ini')
+    engine = connect_snowflake.engine_snowflake(configfile)
     create_stage_tables(engine)
+    engine.dispose()
 
 '''
 with open(output_file, 'w') as ofile:

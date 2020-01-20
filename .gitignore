@@ -1,0 +1,5 @@
+conf/config.ini
+.vscode/
+env/
+*.swp
+generated_code/
