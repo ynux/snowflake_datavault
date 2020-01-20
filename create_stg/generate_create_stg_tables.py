@@ -21,12 +21,12 @@ tabdef_file_pattern = os.path.join(parent_dir, 'input', 'table_definitions', '*.
 # output dir
 output_file = os.path.join(parent_dir, 'output', 'create_staging_tables.py')
 create_staging_tables_intro = '''
-from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, insert, sql, Sequence, exc
+from sqlalchemy import create_engine, MetaData, Table, Integer, String, Column, insert, sql, Sequence, Boolean, exc
 import configparser
 
 # connect
 config = configparser.ConfigParser()
-config.read('foreign_key_snow/config.ini')
+config.read('./conf/config.ini')
 
 engine = create_engine(
     'snowflake://{user}:{password}@{account}/{database}/{schema}?warehouse={warehouse}'.format(
@@ -41,12 +41,17 @@ engine = create_engine(
 
 # results = connection.execute('select current_version()').fetchone()
 
-def create_sample_tables(eng):
+def create_stage_tables(eng):
     # Some sample tables, without foreign keys
     metadata = MetaData()
 '''
 create_staging_tables_outro = '''
-fertig jetzt
+    metadata.create_all(eng)
+
+
+if __name__ == "__main__":
+    create_stage_tables(engine)
+
 '''
 with open(output_file, 'w') as ofile:
     ofile.truncate()
