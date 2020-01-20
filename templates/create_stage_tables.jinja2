@@ -1,6 +1,23 @@
 {%- for row in rows %}
+{%- set snow_data_type = row['data_type'] | 
+    replace("DATE","Date") |
+    replace("TEXT","String") |
+    replace("NUMBER","Integer") |
+    replace("int","Integer") |
+    replace("smallInteger", "Integer") |
+    replace("tinyInteger", "Integer") |
+    replace("bit", "Boolean") |
+    replace("DATE","Date") |
+    replace("TIMESTAMP_NTZ","TIMESTAMP_NTZ") |
+    replace("uniqueidentifier", "String") | 
+    replace("varbinary", "String") |
+    replace("nvarchar", "String") |
+    replace("nchar", "String") |
+    replace("xml", "String") |
+    replace("hierarchyid", "String") 
+%}
 {%- if loop.index == 1 %}
     {{ row['table'] | lower }} = Table('{{ row['table'] }}', metadata, 
 {%-endif%}
-        Column('{{ row['column'] }}', {{ row['data_type'] | replace("TEXT","String") |  replace("NUMBER","Integer") |  replace("DATE","Date") |  replace("TIMESTAMP_NTZ","TIMESTAMP_NTZ") }}, nullable={{ row['nullable'] | replace("YES","True") |  replace("NO","False") }}){{ "," if not loop.last else "\n    )" }}
+        Column('{{ row['column'] }}', {{ snow_data_type }}, nullable={{ row['nullable'] | replace("YES","True") |  replace("NO","False") }}){{ "," if not loop.last else "\n    )" }}
 {%-endfor%}
