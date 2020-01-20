@@ -1,0 +1,15 @@
+
+[db_credentials] 
+user = xxx
+password = xxx
+
+
+[db_connection] 
+account = btelligent.eu-central-1
+database = test_db
+schema = AE_HDS
+warehouse = load_wh
+
+[db_structure]
+staging_schema=SYNTH_DV_STG
+rawvault_schema=SYNTH_DV_RV
