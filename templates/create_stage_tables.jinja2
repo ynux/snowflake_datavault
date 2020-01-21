@@ -17,7 +17,7 @@
     replace("hierarchyid", "String") 
 %}
 {%- if loop.index == 1 %}
-    {{ row['table'] | lower }} = Table('{{ row['table'] }}', metadata, 
+    {{ row['table'] | lower }} = Table('{{ row['table'] | upper }}', metadata, 
 {%-endif%}
-        Column('{{ row['column'] }}', {{ snow_data_type }}, nullable={{ row['nullable'] | replace("YES","True") |  replace("NO","False") }}){{ "," if not loop.last else "\n    )" }}
+        Column('{{ row['column'] | upper }}', {{ snow_data_type }}, nullable={{ row['nullable'] | replace("YES","True") |  replace("NO","False") }}){{ "," if not loop.last else "\n    )" }}
 {%-endfor%}

@@ -55,5 +55,5 @@ for tests, there should be a sqlite version
 
 
 Remark: Presently, everything goes into the schema configured in the config.ini
-
+we upper case all tables and columns
 

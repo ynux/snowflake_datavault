@@ -1,0 +1,79 @@
+
+import random
+import string
+from datetime import timedelta, datetime
+from sqlalchemy import create_engine, MetaData, Table
+
+
+def randomString(stringLength=10):
+    """Generate a random string of fixed length """
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
+
+
+def get_next_day(thisday):
+    return (datetime.strptime(thisday, "%Y-%m-%d") + timedelta(days=1)).date()
+
+
+def generate_synth_data(table, base_rowid, count, base_date):
+    synth_data = {}
+
+    if table == 'CULTURE':
+        synth_data = {
+            'cultureid': randomString(10),
+            'name': randomString(10)
+        }
+
+    if table == 'ILLUSTRATION':
+        synth_data = {
+            'illustrationid': random.randint(1, 100),
+            'diagram': randomString(10)
+        }
+
+    if table == 'DOCUMENT':
+        synth_data = {
+            'documentnode': randomString(10),
+            'documentlevel': random.randint(1, 100),
+            'title': randomString(10),
+            'owner': random.randint(1, 100),
+            'folderflag': random.randint(0,1),
+            'filename': randomString(10),
+            'fileextension': randomString(10),
+            'revision': randomString(10),
+            'changenumber': random.randint(1, 100),
+            'status': random.randint(1, 100),
+            'documentsummary': randomString(10),
+            'document': randomString(10),
+            'rowguid': randomString(10)
+        }
+
+    return synth_data
+
+
+def insert_synth_data(eng, table_list):
+    metadata2 = MetaData()
+    connection = eng.connect()
+    for table in table_list:
+        table_lower = table.lower
+        table_lower = Table(table, metadata2, autoload=True, autoload_with=eng)
+        for count in range(4):
+            sd = generate_synth_data(table, 337100, count, '2019-11-11')
+            print(table, sd)
+            if sd != {}:
+                connection.execute(table_lower.insert(), sd)
+        for count in range(4):
+            sd = generate_synth_data(table, 337100, count, '2019-11-12')
+            if sd != {}:
+                connection.execute(table_lower.insert(), sd)
+    connection.close()
+
+
+if __name__ == "__main__":
+    from bin import connect_snowflake
+    import os
+    basedir = os.path.dirname(os.path.abspath(__file__))
+    configfile = os.path.join(basedir, 'conf', 'config.ini')
+    engine = connect_snowflake.engine_snowflake(configfile)
+    table_list = ['CULTURE', 'ILLUSTRATION', 'DOCUMENT']
+    insert_synth_data(engine, table_list)
+    engine.dispose()

@@ -1,0 +1,26 @@
+{%- for row in rows -%}
+{%- set random_data = row['data_type'] | 
+    replace("DATE", "base_date") |
+    replace("TEXT", "randomString(10)") |
+    replace("NUMBER", "random.randint(1, 100)") |
+    replace("smallint","int") |
+    replace("tinyint","int") |
+    replace("int","random.randint(1, 100)") |
+    replace("smallInteger", "random.randint(1, 100)") |
+    replace("tinyInteger", "random.randint(1, 100)") |
+    replace("bit", "random.randint(0,1)") |
+    replace("TIMESTAMP_NTZ","base_date + ' 02:17:42'") |
+    replace("uniqueidentifier", "randomString(10)") | 
+    replace("varbinary", "randomString(10)") |
+    replace("nvarchar", "randomString(10)") |
+    replace("nchar", "randomString(10)") |
+    replace("xml", "randomString(10)") |
+    replace("hierarchyid", "randomString(10)") 
+%}
+{%- if loop.index == 1 %}
+    if table == '{{ row['table'] }}':
+        synth_data = {
+{%-endif%}
+            '{{ row['column'] | lower }}': {{ random_data }}{{ "," if not loop.last else  "\n        }"}}
+{%-endfor%}
+
