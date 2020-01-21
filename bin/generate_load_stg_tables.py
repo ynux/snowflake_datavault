@@ -74,7 +74,7 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 tabdef_file_pattern = os.path.join(parent_dir, 'input', 'table_definitions', '*.csv')
 # here: filename = PRODUCTION.CULTURE.csv , tablename = CULTURE
 def extract_table_name(file_name):
-    return file_name.split('.')[1]
+    return file_name.split('.')[0]
 
 # output dir
 output_file = os.path.join(parent_dir, 'load_staging_tables.py')
@@ -90,8 +90,10 @@ with open(output_file, 'a') as ofile:
             rows = DictReader(ifile, fieldnames=['table', 'column', 'data_type', 'nullable', 'comment'])
             table_sqlalch = template.render(rows=rows)
             ofile.write(table_sqlalch)
-            # we rely on the file name pattern 
-            table_set.add(extract_table_name(matching_file))
+            ifile.seek(0)
+            rows = DictReader(ifile, fieldnames=['table', 'column', 'data_type', 'nullable', 'comment'])
+            for row in rows:
+                table_set.add(row['table'])
     ofile.write(create_staging_tables_outro_1)
     ofile.write("    table_list = " + str(list(table_set)))
     ofile.write(create_staging_tables_outro_2)

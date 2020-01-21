@@ -1,0 +1,102 @@
+
+from sqlalchemy import MetaData, Table, Integer, String, Column, Boolean, Date
+
+
+def create_stage_tables(eng):
+    # Some sample tables, without foreign keys
+    metadata = MetaData()
+
+    orders = Table('ORDERS', metadata,
+        Column('O_ORDERPRIORITY', String, nullable=False),
+        Column('O_CUSTKEY', Integer, nullable=False),
+        Column('O_ORDERSTATUS', String, nullable=False),
+        Column('O_SHIPPRIORITY', Integer, nullable=False),
+        Column('O_COMMENT', String, nullable=False),
+        Column('O_TOTALPRICE', Integer, nullable=False),
+        Column('O_CLERK', String, nullable=False),
+        Column('O_ORDERDATE', Date, nullable=False),
+        Column('O_ORDERKEY', Integer, nullable=False)
+    )
+    partsupp = Table('PARTSUPP', metadata,
+        Column('PS_AVAILQTY', Integer, nullable=False),
+        Column('PS_SUPPKEY', Integer, nullable=False),
+        Column('PS_SUPPLYCOST', Integer, nullable=False),
+        Column('PS_COMMENT', String, nullable=True),
+        Column('PS_PARTKEY', Integer, nullable=False)
+    )
+    part = Table('PART', metadata,
+        Column('P_PARTKEY', Integer, nullable=False),
+        Column('P_RETAILPRICE', Integer, nullable=False),
+        Column('P_TYPE', String, nullable=False),
+        Column('P_BRAND', String, nullable=False),
+        Column('P_MFGR', String, nullable=False),
+        Column('P_NAME', String, nullable=False),
+        Column('P_SIZE', Integer, nullable=False),
+        Column('P_COMMENT', String, nullable=True),
+        Column('P_CONTAINER', String, nullable=False),
+        Column('PS_AVAILQTY', Integer, nullable=False),
+        Column('PS_SUPPKEY', Integer, nullable=False),
+        Column('PS_SUPPLYCOST', Integer, nullable=False),
+        Column('PS_COMMENT', String, nullable=True),
+        Column('PS_PARTKEY', Integer, nullable=False)
+    )
+    supplier = Table('SUPPLIER', metadata,
+        Column('S_NAME', String, nullable=False),
+        Column('S_COMMENT', String, nullable=True),
+        Column('S_PHONE', String, nullable=False),
+        Column('S_NATIONKEY', Integer, nullable=False),
+        Column('S_ADDRESS', String, nullable=False),
+        Column('S_ACCTBAL', Integer, nullable=False),
+        Column('S_SUPPKEY', Integer, nullable=False)
+    )
+    nation = Table('NATION', metadata,
+        Column('N_COMMENT', String, nullable=True),
+        Column('N_REGIONKEY', Integer, nullable=False),
+        Column('N_NATIONKEY', Integer, nullable=False),
+        Column('N_NAME', String, nullable=False)
+    )
+    customer = Table('CUSTOMER', metadata,
+        Column('C_MKTSEGMENT', String, nullable=True),
+        Column('C_CUSTKEY', Integer, nullable=False),
+        Column('C_ACCTBAL', Integer, nullable=False),
+        Column('C_NATIONKEY', Integer, nullable=False),
+        Column('C_COMMENT', String, nullable=True),
+        Column('C_NAME', String, nullable=False),
+        Column('C_PHONE', String, nullable=False),
+        Column('C_ADDRESS', String, nullable=False)
+    )
+    lineitem = Table('LINEITEM', metadata,
+        Column('L_ORDERKEY', Integer, nullable=False),
+        Column('L_RETURNFLAG', String, nullable=False),
+        Column('L_SHIPDATE', Date, nullable=False),
+        Column('L_DISCOUNT', Integer, nullable=False),
+        Column('L_QUANTITY', Integer, nullable=False),
+        Column('L_LINESTATUS', String, nullable=False),
+        Column('L_PARTKEY', Integer, nullable=False),
+        Column('L_SHIPINSTRUCT', String, nullable=False),
+        Column('L_COMMENT', String, nullable=False),
+        Column('L_COMMITDATE', Date, nullable=False),
+        Column('L_TAX', Integer, nullable=False),
+        Column('L_LINENUMBER', Integer, nullable=False),
+        Column('L_EXTENDEDPRICE', Integer, nullable=False),
+        Column('L_RECEIPTDATE', Date, nullable=False),
+        Column('L_SUPPKEY', Integer, nullable=False),
+        Column('L_SHIPMODE', String, nullable=False)
+    )
+    region = Table('REGION', metadata,
+        Column('R_NAME', String, nullable=False),
+        Column('R_REGIONKEY', Integer, nullable=False),
+        Column('R_COMMENT', String, nullable=True)
+    )
+    metadata.create_all(eng)
+
+
+if __name__ == "__main__":
+    from bin import connect_snowflake
+    import os
+    basedir = os.path.dirname(os.path.abspath(__file__))
+    configfile = os.path.join(basedir, 'conf', 'config.ini')
+    engine = connect_snowflake.engine_snowflake(configfile)
+    create_stage_tables(engine)
+    engine.dispose()
+
