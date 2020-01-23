@@ -14,8 +14,6 @@ source_target_mapping_csv = os.path.join(parent_dir, 'input', 'source_target_map
 
 # output dir
 output_file = os.path.join(parent_dir, 'create_hubs.py')
-create_hubs_intro = '''
-'''
 
 sample_metadata = '''
 HUB_NAME,HUB_BUSINESS_KEY_DEFINITION,SOURCE_NAME,SOURCE_BUSINESS_KEY_DEFINITION

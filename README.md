@@ -19,7 +19,7 @@ and to load them.
 ### Sample Input Metadata and Data
 
 This project uses Snowflake databases, and the sample database snowflake_sample_data.TPCH_SF1 .
-It creates "stupid synthetic data", simply random strings / numbers and some fixed dates, without any logic or structure. It would be better to switch to the actual data in the sample database (TODO)
+It creates "stupid synthetic data", simply random strings / numbers and some fixed dates, without any logic or structure. It would be better to switch to the actual data in the sample database 
 
 ### What to use this for
 
@@ -28,7 +28,8 @@ The goal is to produce something visible, it takes many shortcuts.
 
 ### Data Vault Metadata Design
 
-The metadata is designed for [the TEAM metadata of Roelant Vos](https://github.com/RoelantVos/TEAM)
+The metadata columns of the sats and hubs are designed for [the TEAM metadata of Roelant Vos](https://github.com/RoelantVos/TEAM)
+The metadata for hub and sat generation is a simplified version of what TEAM uses.
 
 ### Notes on the Code
 
@@ -46,7 +47,8 @@ The metadata is designed for [the TEAM metadata of Roelant Vos](https://github.c
 5. generate the load table statements for staging `bin/generate_load_stg_tales.py` (with synthetic data, simple data types) OR get real data (TODO)
 6. Fill the staging tables with random data `./load_staging_tables.py` or sample data (TODO)
 7. Create the source-to-target-mapping (hub & sat metadata), manually 
-8. generate statements to create hubs and sats (TODO)
+8. generate statements to create hubs, and create them : `bin/generate_create_hubs.py`, `./create_hubs.py`
+8. generate metadata to create sats, generate statements to create sats. This is done in two steps in case a user wants to manually change the attribute mapping. Then create the satellite tables. (TODO)
 9. Create link metadata, manually
 9. Create links
 10. Create load hubs statements
