@@ -73,8 +73,11 @@ template = env.get_template('load_stage_tables.jinja2')
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 tabdef_file_pattern = os.path.join(parent_dir, 'input', 'table_definitions', '*.csv')
 # here: filename = PRODUCTION.CULTURE.csv , tablename = CULTURE
+
+
 def extract_table_name(file_name):
     return file_name.split('.')[0]
+
 
 # output dir
 output_file = os.path.join(parent_dir, 'load_staging_tables.py')
