@@ -1,36 +1,35 @@
 import os
+import glob
 from jinja2 import FileSystemLoader, Environment
 from csv import DictReader
 
 
 # for testing
 sample_csv_data = '''
-TABLE_NAME,COLUMN_NAME,IS_NULLABLE,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,NUMERIC_PRECISION,NUMERIC_SCALE
-CUSTOMER,C_MKTSEGMENT,YES,TEXT,10,,
-CUSTOMER,C_ACCTBAL,NO,NUMBER,,12,2
+tableA,colX,NUMBER,YES,,
+tableA,colY,TEXT,NO,,
 '''
 
 # jinja templates
 file_loader = FileSystemLoader('./templates')
 env = Environment(loader=file_loader)
-template_create_table = env.get_template('create_stage_tables_table.jinja2')
-template_create_column = env.get_template('create_stage_tables_column.jinja2')
+template = env.get_template('create_stage_tables_simple.jinja2')
 
 # find table definitions
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-table_column_csv = os.path.join(parent_dir, 'input', 'table_definitions', 'full_column_def.csv')
+tabdef_file_pattern = os.path.join(parent_dir, 'input', 'table_definitions_simple', '*.csv')
 
 # output dir
 output_file = os.path.join(parent_dir, 'create_staging_tables.py')
 create_staging_tables_intro = '''
-from sqlalchemy import MetaData, Table, Numeric, String, Column, Boolean, Date
+from sqlalchemy import MetaData, Table, Integer, String, Column, Boolean
 
 
 def create_stage_tables(eng):
+    # Some sample tables, without foreign keys
     metadata = MetaData()
 '''
 create_staging_tables_outro = '''
-    )
     metadata.create_all(eng)
 
 
@@ -49,17 +48,10 @@ with open(output_file, 'w') as ofile:
 
 with open(output_file, 'a') as ofile:
     ofile.write(create_staging_tables_intro)
-    with open(table_column_csv, 'r') as ifile:
-        rows = DictReader(ifile)
-        table = ''
-        first_table = True
-        for row in rows:
-            if row['TABLE_NAME'] != table:
-                table_sqlalch_tab = template_create_table.render(row=row, first_table=first_table)
-                first_table = False
-                ofile.write(table_sqlalch_tab)
-                table = row['TABLE_NAME']
-            table_sqlalch_col = template_create_column.render(row=row)
-            ofile.write(table_sqlalch_col)
+    for matching_file in glob.glob(tabdef_file_pattern):
+        with open(matching_file, 'r') as ifile:
+            rows = DictReader(ifile, fieldnames=['table', 'column', 'data_type', 'nullable', 'comment'])
+            table_sqlalch = template.render(rows=rows)
+            ofile.write(table_sqlalch)
     ofile.write(create_staging_tables_outro)
 

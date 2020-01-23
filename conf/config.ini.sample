@@ -7,7 +7,7 @@ password = xxx
 [db_connection] 
 account = btelligent.eu-central-1
 database = test_db
-schema = AE_HDS
+schema = DV_PLAY
 warehouse = load_wh
 
 [db_structure]

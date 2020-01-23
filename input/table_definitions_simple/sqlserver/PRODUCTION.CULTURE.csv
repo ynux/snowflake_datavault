@@ -1,0 +1,2 @@
+CULTURE,CultureID,nchar,NO,Primary key for Culture records.  
+CULTURE,Name,nvarchar,YES,Culture description.

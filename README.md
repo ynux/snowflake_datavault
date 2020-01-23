@@ -19,7 +19,7 @@ and to load them.
 ### Sample Input Metadata and Data
 
 This project uses Snowflake databases, and the sample database snowflake_sample_data.TPCH_SF1 .
-It creates "stupid synthetic data", simply random strings / numbers and some fixed dates, without any logic or structure. It would be better to switch to the actual data in the sample database 
+It can either create "stupid synthetic data", simply random strings / numbers and some fixed dates, without any logic or structure. Or load sample data (TODO)
 
 ### What to use this for
 
@@ -41,14 +41,23 @@ The metadata for hub and sat generation is a simplified version of what TEAM use
 
 1. Prepare input metadata in `data/input/table_definitions.csv` (see below for examples)
 2. Establish connection to Snowflake `bin/connect_snowflake.py`
+
+For synthetic data and simple data types (String without CHARACTER_MAXIMUM_LENGTH etc.):
+
+3. generate create table statements for staging `bin/generate_create_stg_tables_simple.py`
+4. run the create table script `./create_staging_tables_simple.py`
+5. generate the load table statements for staging `bin/generate_load_stg_tables_simple.py`
+6. Fill the staging tables with random data `./load_staging_tables_simple.py`
+
+For sample data and full data types:
 3. generate create table statements for staging `bin/generate_create_stg_tables.py`
-   OR `bin/generate_create_stg_tables_full.py`
-4. run the create table script `./create_staging_tables.py` OR `./create_staging_tables_full.py`
-5. generate the load table statements for staging `bin/generate_load_stg_tales.py` (with synthetic data, simple data types) OR get real data (TODO)
-6. Fill the staging tables with random data `./load_staging_tables.py` or sample data (TODO)
+4. run the create table script `./create_staging_tables.py`
+5. generate the load table statements for staging `bin/generate_load_stg_tables.py` (TODO)
+6. Fill the staging tables with random data `./load_staging_tables.py` (TODO)
+
 7. Create the source-to-target-mapping (hub & sat metadata), manually 
 8. generate statements to create hubs, and create them : `bin/generate_create_hubs.py`, `./create_hubs.py`
-8. generate metadata to create sats, generate statements to create sats. This is done in two steps in case a user wants to manually change the attribute mapping. Then create the satellite tables. (TODO)
+8. generate metadata to create sats, generate statements to create sats. This is done in two steps in case a user wants to manually change the attribute mapping. Then create the satellite tables. 
 9. Create link metadata, manually
 9. Create links
 10. Create load hubs statements
