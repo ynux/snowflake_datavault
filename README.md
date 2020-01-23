@@ -19,7 +19,7 @@ and to load them.
 ### Sample Input Metadata and Data
 
 This project uses Snowflake databases, and the sample database snowflake_sample_data.TPCH_SF1 .
-It creates "stupid synthetic data", simply random strings / numbers and some fixed dates, without any logic or structure. It would be better to switch to the actual data in the sample database. 
+It creates "stupid synthetic data", simply random strings / numbers and some fixed dates, without any logic or structure. It would be better to switch to the actual data in the sample database (TODO)
 
 ### What to use this for
 
@@ -38,14 +38,15 @@ The metadata is designed for [the TEAM metadata of Roelant Vos](https://github.c
 
 ### How to use this
 
-1. Prepare input metadata in `data/input/table_definitions.csv` (see below for example)
+1. Prepare input metadata in `data/input/table_definitions.csv` (see below for examples)
 2. Establish connection to Snowflake `bin/connect_snowflake.py`
 3. generate create table statements for staging `bin/generate_create_stg_tables.py`
-4. run the create table script `./create_staging_tables.py`
-5. generate the load table statements for staging `bin/generate_load_stg_tales.py
-6. Fill the staging tables with random data `./load_staging_tables.py`
-7. Create the source-to-target-mapping (hub & sat metadata), manually
-8. Create hubs and sats
+   OR `bin/generate_create_stg_tables_full.py`
+4. run the create table script `./create_staging_tables.py` OR `./create_staging_tables_full.py`
+5. generate the load table statements for staging `bin/generate_load_stg_tales.py` (with synthetic data, simple data types) OR get real data (TODO)
+6. Fill the staging tables with random data `./load_staging_tables.py` or sample data (TODO)
+7. Create the source-to-target-mapping (hub & sat metadata), manually 
+8. generate statements to create hubs and sats (TODO)
 9. Create link metadata, manually
 9. Create links
 10. Create load hubs statements
@@ -88,6 +89,7 @@ NUMBER
 TEXT
 
 ```
+snowflake is so nice & simple ... delightful
 For the full column definition:
 
 ```
@@ -100,4 +102,3 @@ and tab.table_type = 'BASE TABLE';
 ```
 
 
-snowflake is so nice & simple ... delightful
