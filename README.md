@@ -85,4 +85,8 @@ and tab.table_type = 'BASE TABLE';
 ```
 snowflake datatypes are so simple ... delightful. It's all DATE, NUMBER, TEXT.
 
+### Remark on Snowflake's Sample DB
+
+The sample schema has some special features. The data is apperently generated randomly, so for every where clause, one row comes back. Also, i couldn't query the information query for the objects.
+
 
