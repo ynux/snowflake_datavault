@@ -57,7 +57,7 @@ if __name__ == "__main__":
     import os
     basedir = os.path.dirname(os.path.abspath(__file__))
     configfile = os.path.join(basedir, 'conf', 'config.ini')
-    engine = connect_snowflake.engine_snowflake(configfile)
+    engine = connect_snowflake.engine_snowflake(configfile, 'staging_db_schema')
 '''
 create_staging_tables_outro_2 = '''
     insert_synth_data(engine, table_list)

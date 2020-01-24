@@ -40,7 +40,7 @@ The metadata for hub and sat generation is a simplified version of what TEAM use
 ### How to use this
 
 1. Prepare input metadata in `data/input/table_definitions.csv` (see below for examples)
-2. Establish connection to Snowflake `bin/connect_snowflake.py`
+2. Establish connection to Snowflake `bin/connect_snowflake.py` (everything in config.ini is expected to exist)
 
 For synthetic data and simple data types (String without CHARACTER_MAXIMUM_LENGTH etc.):
 

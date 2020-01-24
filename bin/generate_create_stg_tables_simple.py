@@ -38,7 +38,7 @@ if __name__ == "__main__":
     import os
     basedir = os.path.dirname(os.path.abspath(__file__))
     configfile = os.path.join(basedir, 'conf', 'config.ini')
-    engine = connect_snowflake.engine_snowflake(configfile)
+    engine = connect_snowflake.engine_snowflake(configfile, 'staging_db_schema')
     create_stage_tables(engine)
     engine.dispose()
 

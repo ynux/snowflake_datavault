@@ -1,15 +1,20 @@
+[snowflake_credentials] 
+user = XXX
+password = XXX
 
-[db_credentials] 
-user = xxx
-password = xxx
+[snowflake_connection] 
+account = XXX.eu-central-1
+warehouse = XXX
 
+[source_db_schema]
+database = snowflake_sample_data
+schema = TPCH_SF1
 
-[db_connection] 
-account = btelligent.eu-central-1
-database = test_db
-schema = DV_PLAY
-warehouse = load_wh
+[staging_db_schema]
+database = XXX
+schema = DV_STG
 
-[db_structure]
-staging_schema=SYNTH_DV_STG
-rawvault_schema=SYNTH_DV_RV
+[rawvault_db_schema]
+database = XXX
+schema = DV_RAV
+
