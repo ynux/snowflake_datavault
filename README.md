@@ -50,14 +50,14 @@ For synthetic data and simple data types (String without CHARACTER_MAXIMUM_LENGT
 6. Fill the staging tables with random data `./load_staging_tables_simple.py`
 
 For sample data and full data types:
-3. generate create table statements for staging `bin/generate_create_stg_tables.py`
-4. run the create table script `./create_staging_tables.py`
+
+3. generate create table statements for staging , and actually create them: `python bin/generate_create_stg_tables.py`,  `python ./create_staging_tables.py`
 5. generate the load table statements for staging `bin/generate_load_stg_tables.py` (TODO)
-6. Fill the staging tables with random data `./load_staging_tables.py` (TODO)
+6. Fill the staging tables with sample data `./load_staging_tables.py` (TODO)
 
 7. Create the source-to-target-mapping (hub & sat metadata), manually 
-8. generate statements to create hubs, and create them : `bin/generate_create_hubs.py`, `./create_hubs.py`
-8. generate metadata to create sats, generate statements to create sats. This is done in two steps in case a user wants to manually change the attribute mapping. Then create the satellite tables. 
+8. generate statements to create hubs, and create them : `python bin/generate_create_hubs.py`, `python ./create_hubs.py`
+8. generate metadata to create sats, generate statements to create sats. This is done in two steps in case a user wants to manually change the attribute mapping. Then create the satellite tables: `python bin/generate_sat_metadata.py; python bin/generate_create_sats.py; python create_sats.py` 
 9. Create link metadata, manually
 9. Create links
 10. Create load hubs statements
