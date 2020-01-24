@@ -19,7 +19,7 @@ and to load them.
 ### Sample Input Metadata and Data
 
 This project uses Snowflake databases, and the sample database snowflake_sample_data.TPCH_SF1 .
-It can either create "stupid synthetic data", simply random strings / numbers and some fixed dates, without any logic or structure. Or load sample data (TODO)
+It can either create "stupid synthetic data", simply random strings / numbers and some fixed dates, without any logic or structure. Or load sample data (see below for details). 
 
 ### What to use this for
 
@@ -55,9 +55,11 @@ For sample data and full data types:
 5. generate the load table statements for staging `bin/generate_load_stg_tables.py` (TODO)
 6. Fill the staging tables with sample data `./load_staging_tables.py` (TODO)
 
-7. Create the source-to-target-mapping (hub & sat metadata), manually 
-8. generate statements to create hubs, and create them : `python bin/generate_create_hubs.py`, `python ./create_hubs.py`
-8. generate metadata to create sats, generate statements to create sats. This is done in two steps in case a user wants to manually change the attribute mapping. Then create the satellite tables: `python bin/generate_sat_metadata.py; python bin/generate_create_sats.py; python create_sats.py` 
+8. For the Hubs: Create a source-to-target mapping manually in `input/source_target_mappings/hub_mapping.csv`. Then generate statements to create hubs, and create them : `python bin/generate_create_hubs.py`, `python ./create_hubs.py`
+8. For the Satellites: generate or write metadata to create sats, then generate statements to create sats. Or generate metadata and change it manually. As the third and last step, create the satellite tables: `python bin/generate_sat_metadata.py; python bin/generate_create_sats.py; python create_sats.py` 
+
+From here on, it's only a plan.
+
 9. Create link metadata, manually
 9. Create links
 10. Create load hubs statements
@@ -67,43 +69,13 @@ For sample data and full data types:
 14. Load links
 15. Load sats
 
-### Shortcuts Taken
-
-* Presently, everything goes into the schema configured in the config.ini
-* we upper case all tables and columns
-
 ### Getting Sample Input Metadata
+
+For the full column definition:
 
 ```
 use database snowflake_sample_data;
 
-select col.table_name, column_name, data_type, is_nullable, col.comment 
-from information_schema.columns col 
-join information_schema.tables tab
-on ( col.table_name = tab.table_name and col.table_schema = tab.table_schema)
-where col.table_schema = 'TPCH_SF1'
-and tab.table_type = 'BASE TABLE';
-
-for table_name in $(cut -d, -f1 base_table_cols_snow_sample_db.csv | sort -u | grep -vw TABLE_NAME); do echo ${table_name}; csvgrep -c1 -m ${table_name} base_table_cols_snow_sample_db.csv > ${table_name}.csv; done
-
-```
-will create csv with BOM
-unbomb it and cut it into pieces
-remove header
-(we could also change the code to go over the tables, this is just for now when you might want to add one table after the other)
-
-
-```
-cut -d, -f3 *.csv | sort -u
-DATE
-NUMBER
-TEXT
-
-```
-snowflake is so nice & simple ... delightful
-For the full column definition:
-
-```
 select col.table_name, col.column_name, col.is_nullable, col.data_type, col.CHARACTER_MAXIMUM_LENGTH, col.NUMERIC_PRECISION, col.NUMERIC_SCALE
 from information_schema.columns col 
 join information_schema.tables tab
@@ -111,5 +83,6 @@ on ( col.table_name = tab.table_name and col.table_schema = tab.table_schema)
 where col.table_schema = 'TPCH_SF1'
 and tab.table_type = 'BASE TABLE';
 ```
+snowflake datatypes are so simple ... delightful. It's all DATE, NUMBER, TEXT.
 
 
