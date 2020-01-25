@@ -18,7 +18,7 @@ template_create_column = env.get_template('create_stage_tables_column.jinja2')
 
 # find table definitions
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-table_column_csv = os.path.join(parent_dir, 'input', 'table_definitions', 'full_column_def.csv')
+table_column_csv = os.path.join(parent_dir, 'input', 'table_definitions', 'tab_col.csv')
 
 # output dir
 output_file = os.path.join(parent_dir, 'create_staging_tables.py')

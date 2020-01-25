@@ -24,18 +24,19 @@ It can either create "stupid synthetic data", simply random strings / numbers an
 ### What to use this for
 
 Just practice, not real production - you should buy a tool.
-The goal is to produce something visible, it takes many shortcuts.
+The goal is to produce something visible, it takes many shortcuts. It only works under perfect conditions.
 
 ### Data Vault Metadata Design
 
-The metadata columns of the sats and hubs are designed for [the TEAM metadata of Roelant Vos](https://github.com/RoelantVos/TEAM)
-The metadata for hub and sat generation is a simplified version of what TEAM uses.
+The *metadata columns* of the sats and hubs are designed for [the TEAM metadata of Roelant Vos](https://github.com/RoelantVos/TEAM). For a minimal approach see [Kent Graziano's "Data Vault 2.0 Modeling Basics"](https://www.vertabelo.com/blog/data-vault-series-data-vault-2-0-modeling-basics/)
+
+The *metadata for hub and sat generation* is a simplified version of what TEAM uses. For the full beauty see the github repository.
 
 ### Notes on the Code
 
 * written for python 3.7
 * install the requirements
-* for tests, there should be a sqlite version
+* for tests, there should be a sqlite version. See load_stg.py for a stub.
 
 ### How to use this
 
@@ -52,8 +53,7 @@ For synthetic data and simple data types (String without CHARACTER_MAXIMUM_LENGT
 For sample data and full data types:
 
 3. generate create table statements for staging , and actually create them: `python bin/generate_create_stg_tables.py`,  `python ./create_staging_tables.py`
-5. generate the load table statements for staging `bin/generate_load_stg_tables.py` (TODO)
-6. Fill the staging tables with sample data `./load_staging_tables.py` (TODO)
+5. load the staging tables with sample data `./load_stg.py`
 
 8. For the Hubs: Create a source-to-target mapping manually in `input/source_target_mappings/hub_mapping.csv`. Then generate statements to create hubs, and create them : `python bin/generate_create_hubs.py`, `python ./create_hubs.py`
 8. For the Satellites: generate or write metadata to create sats, then generate statements to create sats. Or generate metadata and change it manually. As the third and last step, create the satellite tables: `python bin/generate_sat_metadata.py; python bin/generate_create_sats.py; python create_sats.py` 

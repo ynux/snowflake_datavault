@@ -5,6 +5,6 @@
         Column('RECORD_SOURCE', String, nullable=False),
         Column('ETL_INSERT_RUN_ID', Numeric, nullable=True),
         {%-for buskey in row['HUB_BUSINESS_KEY_DEFINITION'].split('.') %} 
-        Column('{{ buskey .split(':')[0] }}', {{ buskey.split(':')[1] }}, nullable=False){{ "," if not loop.last else "\n    )" }}
+        Column('{{ buskey }}', {{ datatype['C_CUSTKEY'] }}, nullable=False){{ "," if not loop.last else "\n    )" }}
     {%-endfor%}
 {%-endfor%}

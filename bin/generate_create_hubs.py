@@ -11,7 +11,7 @@ template = env.get_template('create_hubs.jinja2')
 
 # source-to-target-mapping
 source_target_mapping_csv = os.path.join(parent_dir, 'input', 'source_target_mappings', 'hub_mapping.csv')
-
+table_column_csv = os.path.join(parent_dir, 'input', 'table_definitions', 'tab_col.csv')
 # output dir
 output_file = os.path.join(parent_dir, 'create_hubs.py')
 
@@ -42,6 +42,32 @@ if __name__ == "__main__":
 
 '''
 
+def datatype_from_list(tab_col_list=['TABLE_NAME', 'COLUMN_NAME', 'IS_NULLABLE', 'DATA_TYPE', 'CHARACTER_MAXIMUM_LENGTH', 'NUMERIC_PRECISION', 'NUMERIC_SCALE']):
+    datatype = 'UNKNOWN'
+    if tab_col_list['DATA_TYPE'] == 'TEXT':
+        if tab_col_list['CHARACTER_MAXIMUM_LENGTH']:
+            datatype = 'String(' + tab_col_list['CHARACTER_MAXIMUM_LENGTH'] + ')'
+        else:
+            datatype = 'String'
+    elif tab_col_list['DATA_TYPE'] == 'NUMBER':
+        if tab_col_list['NUMERIC_PRECISION']:
+            datatype = 'Numeric(' + tab_col_list['NUMERIC_PRECISION'] + "," + tab_col_list['NUMERIC_SCALE'] + ")"
+        else:
+            datatype = 'Numeric'
+    return datatype
+
+
+datatype = {}
+with open(source_target_mapping_csv, 'r') as hub_mapping_file:
+    with open(table_column_csv, 'r') as tab_col_file:
+        hub_rows = DictReader(hub_mapping_file)
+        for hub_row in hub_rows:
+            tabcol_rows = DictReader(tab_col_file)
+            for tabcol_row in tabcol_rows:
+                if hub_row['HUB_NAME'] == "HUB_" + tabcol_row['TABLE_NAME'] and hub_row['HUB_BUSINESS_KEY_DEFINITION'] == tabcol_row['COLUMN_NAME']:
+                    datatype[hub_row['HUB_BUSINESS_KEY_DEFINITION']] = datatype_from_list(tabcol_row)
+
+
 with open(output_file, 'w') as ofile:
     ofile.truncate()
 
@@ -49,6 +75,6 @@ with open(output_file, 'a') as ofile:
     ofile.write(create_hubs_intro)
     with open(source_target_mapping_csv, 'r') as ifile:
         rows = DictReader(ifile)
-        table_sqlalch = template.render(rows=rows)
+        table_sqlalch = template.render(rows=rows, datatype=datatype)
         ofile.write(table_sqlalch)
     ofile.write(create_hubs_outro)
