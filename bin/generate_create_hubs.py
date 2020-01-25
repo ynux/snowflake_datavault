@@ -42,6 +42,7 @@ if __name__ == "__main__":
 
 '''
 
+
 def datatype_from_list(tab_col_list=['TABLE_NAME', 'COLUMN_NAME', 'IS_NULLABLE', 'DATA_TYPE', 'CHARACTER_MAXIMUM_LENGTH', 'NUMERIC_PRECISION', 'NUMERIC_SCALE']):
     datatype = 'UNKNOWN'
     if tab_col_list['DATA_TYPE'] == 'TEXT':
@@ -64,8 +65,10 @@ with open(source_target_mapping_csv, 'r') as hub_mapping_file:
         for hub_row in hub_rows:
             tabcol_rows = DictReader(tab_col_file)
             for tabcol_row in tabcol_rows:
-                if hub_row['HUB_NAME'] == "HUB_" + tabcol_row['TABLE_NAME'] and hub_row['HUB_BUSINESS_KEY_DEFINITION'] == tabcol_row['COLUMN_NAME']:
-                    datatype[hub_row['HUB_BUSINESS_KEY_DEFINITION']] = datatype_from_list(tabcol_row)
+                buskeys = hub_row['HUB_BUSINESS_KEY_DEFINITION'].split('.')
+                for buskey in buskeys:
+                    if hub_row['HUB_NAME'] == "HUB_" + tabcol_row['TABLE_NAME'] and hub_row['HUB_BUSINESS_KEY_DEFINITION'] == tabcol_row['COLUMN_NAME']:
+                        datatype[hub_row['HUB_BUSINESS_KEY_DEFINITION']] = datatype_from_list(tabcol_row)
 
 
 with open(output_file, 'w') as ofile:
