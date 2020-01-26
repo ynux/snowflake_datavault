@@ -1,0 +1,15 @@
+{%- for row in rows %}
+{%- set link_key = row['LINK_NAME'][4:] + '_HSH' %}
+{%- set hub1_key = row['FIRST_HUB'][4:] + '_HSH' %}
+{%- set hub2_key = row['SECOND_HUB'][4:] + '_HSH' %}
+    {{ row['LINK_NAME'] | lower }} = Table('{{ row['LINK_NAME'] }}', metadata, 
+        Column('{{ link_key }}', String(32), nullable=False, primary_key=True),
+        Column('{{ hub1_key }}', String(32), nullable=False ),
+        Column('{{ hub2_key }}', String(32), nullable=False ),
+        Column('LOAD_DATETIME', Date, nullable=False),
+        Column('RECORD_SOURCE', String, nullable=False),
+        Column('ETL_INSERT_RUN_ID', Numeric(38,0), nullable=True),
+        Column('{{ row['FIRST_HUB_BKEYS'] }}', Numeric(38,0), nullable=False),
+        Column('{{ row['SECOND_HUB_BKEYS'] }}', Numeric(38,0), nullable=False)
+    )
+{%-endfor%}
