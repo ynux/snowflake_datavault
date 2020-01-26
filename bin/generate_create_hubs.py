@@ -43,16 +43,16 @@ if __name__ == "__main__":
 '''
 
 
-def datatype_from_list(tab_col_list=['TABLE_NAME', 'COLUMN_NAME', 'IS_NULLABLE', 'DATA_TYPE', 'CHARACTER_MAXIMUM_LENGTH', 'NUMERIC_PRECISION', 'NUMERIC_SCALE']):
+def datatype_from_list(tab_col_dict):
     datatype = 'UNKNOWN'
-    if tab_col_list['DATA_TYPE'] == 'TEXT':
-        if tab_col_list['CHARACTER_MAXIMUM_LENGTH']:
-            datatype = 'String(' + tab_col_list['CHARACTER_MAXIMUM_LENGTH'] + ')'
+    if tab_col_dict['DATA_TYPE'] == 'TEXT':
+        if tab_col_dict['CHARACTER_MAXIMUM_LENGTH']:
+            datatype = 'String(' + tab_col_dict['CHARACTER_MAXIMUM_LENGTH'] + ')'
         else:
             datatype = 'String'
-    elif tab_col_list['DATA_TYPE'] == 'NUMBER':
-        if tab_col_list['NUMERIC_PRECISION']:
-            datatype = 'Numeric(' + tab_col_list['NUMERIC_PRECISION'] + "," + tab_col_list['NUMERIC_SCALE'] + ")"
+    elif tab_col_dict['DATA_TYPE'] == 'NUMBER':
+        if tab_col_dict['NUMERIC_PRECISION']:
+            datatype = 'Numeric(' + tab_col_dict['NUMERIC_PRECISION'] + "," + tab_col_dict['NUMERIC_SCALE'] + ")"
         else:
             datatype = 'Numeric'
     return datatype
@@ -68,6 +68,9 @@ with open(source_target_mapping_csv, 'r') as hub_mapping_file:
                 buskeys = hub_row['HUB_BUSINESS_KEY_DEFINITION'].split('.')
                 for buskey in buskeys:
                     if hub_row['HUB_NAME'] == "HUB_" + tabcol_row['TABLE_NAME'] and hub_row['HUB_BUSINESS_KEY_DEFINITION'] == tabcol_row['COLUMN_NAME']:
+                        del tabcol_row['TABLE_NAME']
+                        del tabcol_row['COLUMN_NAME']
+                        del tabcol_row['IS_NULLABLE']
                         datatype[hub_row['HUB_BUSINESS_KEY_DEFINITION']] = datatype_from_list(tabcol_row)
 
 
