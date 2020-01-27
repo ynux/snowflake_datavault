@@ -1,0 +1,46 @@
+{%- for row in rows %}
+{%- set HubHashKey = row['HUB_NAME'][4:] + "_HSH" %}
+{%- set EtlInsertRunId = -1 %}
+{%- set BusKeys = row['HUB_BUSINESS_KEY_DEFINITION'].split('.') %}
+{%- set MD5SandedBKeys = "MD5('" + ("' || '^' || '").join(BusKeys) + "')" %}
+{# For real use, have standard format of dates and times #}
+
+
+INSERT INTO {{ row['HUB_SCHEMA_NAME'] }}.{{ row['HUB_NAME'] }}
+    (   {{ HubHashKey }},
+     {%- for BusKey in BusKeys %}
+        {{ BusKey }}, 
+     {%- endfor  %}
+        LOAD_DATETIME,
+        RECORD_SOURCE,
+        ETL_INSERT_RUN_ID
+    )
+SELECT  s.{{ HubHashKey }},
+     {%- for BusKey in BusKeys %}
+        s.{{ BusKey }}, 
+     {%- endfor  %}
+        s.LOAD_DATETIME,
+        s.RECORD_SOURCE,
+        '-1'
+FROM (
+        SELECT  
+                {{ MD5SandedBKeys }} AS {{ HubHashKey }},
+            {%- for BusKey in BusKeys %}
+                {{ BusKey }}, 
+            {%- endfor  %}
+                CURRENT_DATE() AS LOAD_DATETIME,
+                '{{ row['SOURCE_NAME'] }}' AS RECORD_SOURCE
+        FROM {{ row['SOURCE_SCHEMA_NAME'] }}.{{ row['SOURCE_NAME'] }}
+        GROUP BY {{ MD5SandedBKeys }},
+            {%- for BusKey in BusKeys %}
+                {{ BusKey }}, 
+            {%- endfor  %}
+                '{{ row['SOURCE_NAME'] }}'
+     ) s
+LEFT OUTER JOIN {{ row['HUB_SCHEMA_NAME'] }}.{{ row['HUB_NAME'] }} t
+    ON 
+            {%- for BusKey in BusKeys %}
+                {{ "AND " if not loop.first }} s.{{ BusKey }} = t.{{ BusKey }}
+            {%- endfor  %}
+WHERE t.{{ HubHashKey }} IS NULL;
+{%- endfor %}

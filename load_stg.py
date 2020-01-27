@@ -31,7 +31,7 @@ if __name__ == "__main__":
     inspector = inspect(engine_target)
     tables = inspector.get_table_names()
     for table in tables:
-        insert_into_stage(table, engine_source, create_engine, 2)
+        insert_into_stage(table, engine_source, create_engine, 10)
 
     engine_source.dispose()
     engine_target.dispose()

@@ -7,7 +7,7 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # jinja templates
 file_loader = FileSystemLoader(os.path.join(parent_dir, 'templates'))
 env = Environment(loader=file_loader)
-template = env.get_template('load_hub_simple.jinja2')
+template = env.get_template('load_hubs.jinja2')
 
 # source-to-target-mapping
 source_target_mapping_csv = os.path.join(parent_dir, 'input', 'source_target_mappings', 'hub_mapping.csv')
