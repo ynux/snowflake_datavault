@@ -1,0 +1,26 @@
+INSERT INTO DV_RAV.HUB_CUSTOMER
+    (   CUSTOMER_HSH,
+        C_CUSTKEY
+        LOAD_DATETIME,
+        RECORD_SOURCE,
+        ETL_INSERT_RUN_ID
+    )
+SELECT  s.CUSTOMER_HSH
+        C_CUSTKEY,
+        s.LOAD_DATETIME,
+        s.RECORD_SOURCE,
+        -1
+FROM (
+        SELECT  
+                MD5(C_CUSTKEY) AS CUSTOMER_HSH
+                C_CUSTKEY,
+		CURRENT_DATE() AS LOAD_DATETIME
+                'CUSTOMER' AS RECORD_SOURCE,
+        FROM DV_STG.CUSTOMER
+        GROUP BY MD5(C_CUSTKEY),
+                 C_CUSTKEY,
+                 'CUSTOMER'
+     ) s
+LEFT OUTER JOIN DV_RAW.HUB_CUSTOMER t
+    ON (   s.C_CUSTKEY = t.C_CUSTKEY )
+WHERE t.CUSTOMER_HSH IS NULL
