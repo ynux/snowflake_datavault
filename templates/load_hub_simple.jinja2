@@ -1,0 +1,31 @@
+{%- for row in rows %}
+{%- set HubHashKey = row['HUB_NAME'][4:] + "_HSH" %}
+{%- set EtlInsertRunId = -1 %}
+
+INSERT INTO {{ row['HUB_SCHEMA_NAME'] }}.{{ row['HUB_NAME'] }}
+    (   {{ HubHashKey }},
+        {{ row['HUB_BUSINESS_KEY_DEFINITION'] }},
+        LOAD_DATETIME,
+        RECORD_SOURCE,
+        ETL_INSERT_RUN_ID
+    )
+SELECT  s.{{ HubHashKey }},
+        s.{{ row['HUB_BUSINESS_KEY_DEFINITION'] }},
+        s.LOAD_DATETIME,
+        s.RECORD_SOURCE,
+        '-1'
+FROM (
+        SELECT  
+                MD5({{ row['HUB_BUSINESS_KEY_DEFINITION'] }}) AS {{ HubHashKey }},
+                {{ row['HUB_BUSINESS_KEY_DEFINITION'] }},
+                CURRENT_DATE() AS LOAD_DATETIME,
+                '{{ row['SOURCE_NAME'] }}' AS RECORD_SOURCE
+        FROM {{ row['SOURCE_SCHEMA_NAME'] }}.{{ row['SOURCE_NAME'] }}
+        GROUP BY MD5({{ row['HUB_BUSINESS_KEY_DEFINITION'] }}),
+                 {{ row['HUB_BUSINESS_KEY_DEFINITION'] }},
+                 '{{ row['SOURCE_NAME'] }}'
+     ) s
+LEFT OUTER JOIN {{ row['HUB_SCHEMA_NAME'] }}.{{ row['HUB_NAME'] }} t
+    ON (   s.{{ row['HUB_BUSINESS_KEY_DEFINITION'] }} = t.{{ row['HUB_BUSINESS_KEY_DEFINITION'] }} )
+WHERE t.{{ HubHashKey }} IS NULL;
+{%- endfor %}

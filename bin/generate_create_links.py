@@ -15,7 +15,6 @@ table_column_csv = os.path.join(parent_dir, 'input', 'table_definitions', 'tab_c
 hubmapping_csv = os.path.join(parent_dir, 'input', 'source_target_mappings', 'hub_mapping.csv')
 
 
-
 # output dir
 output_file = os.path.join(parent_dir, 'create_links_generated.py')
 
@@ -104,6 +103,7 @@ def get_hubkey_datatype(hubdef_csv):
                             del tabcol_row['IS_NULLABLE']
                             datatype_dict[hub_row['HUB_BUSINESS_KEY_DEFINITION']] = datatype_from_dict(tabcol_row)
     return datatype_dict
+
 
 datatypes = get_hubkey_datatype(hubmapping_csv)
 buskeys = {}

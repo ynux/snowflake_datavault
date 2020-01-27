@@ -11,6 +11,7 @@ template = env.get_template('create_hubs.jinja2')
 
 # source-to-target-mapping
 source_target_mapping_csv = os.path.join(parent_dir, 'input', 'source_target_mappings', 'hub_mapping.csv')
+table_column_csv = os.path.join(parent_dir, 'input', 'table_definitions', 'tab_col.csv')
 # output dir
 output_file = os.path.join(parent_dir, 'create_hubs.py')
 
@@ -42,42 +43,6 @@ if __name__ == "__main__":
 '''
 
 
-def datatype_from_dict(tab_col_dict):
-    datatype = 'UNKNOWN'
-    if tab_col_dict['DATA_TYPE'] == 'TEXT':
-        if tab_col_dict['CHARACTER_MAXIMUM_LENGTH']:
-            datatype = 'String(' + tab_col_dict['CHARACTER_MAXIMUM_LENGTH'] + ')'
-        else:
-            datatype = 'String'
-    elif tab_col_dict['DATA_TYPE'] == 'NUMBER':
-        if tab_col_dict['NUMERIC_PRECISION']:
-            datatype = 'Numeric(' + tab_col_dict['NUMERIC_PRECISION'] + "," + tab_col_dict['NUMERIC_SCALE'] + ")"
-        else:
-            datatype = 'Numeric'
-    return datatype
-
-
-def get_hubkey_datatype(hubdef_csv):
-    table_column_csv = os.path.join(parent_dir, 'input', 'table_definitions', 'tab_col.csv')
-    datatype_dict = {}
-    with open(hubdef_csv, 'r') as hub_mapping_file:
-        with open(table_column_csv, 'r') as tab_col_file:
-            hub_rows = DictReader(hub_mapping_file)
-            for hub_row in hub_rows:
-                tabcol_rows = DictReader(tab_col_file)
-                for tabcol_row in tabcol_rows:
-                    buskeys = hub_row['HUB_BUSINESS_KEY_DEFINITION'].split('.')
-                    for buskey in buskeys:
-                        if hub_row['HUB_NAME'] == "HUB_" + tabcol_row['TABLE_NAME'] and hub_row['HUB_BUSINESS_KEY_DEFINITION'] == tabcol_row['COLUMN_NAME']:
-                            del tabcol_row['TABLE_NAME']
-                            del tabcol_row['COLUMN_NAME']
-                            del tabcol_row['IS_NULLABLE']
-                            datatype_dict[hub_row['HUB_BUSINESS_KEY_DEFINITION']] = datatype_from_dict(tabcol_row)
-    return datatype_dict
-
-
-datatypes = get_hubkey_datatype(source_target_mapping_csv)
-
 with open(output_file, 'w') as ofile:
     ofile.truncate()
 
@@ -85,6 +50,6 @@ with open(output_file, 'a') as ofile:
     ofile.write(create_hubs_intro)
     with open(source_target_mapping_csv, 'r') as ifile:
         rows = DictReader(ifile)
-        table_sqlalch = template.render(rows=rows, datatype=datatypes)
+        table_sqlalch = template.render(rows=rows)
         ofile.write(table_sqlalch)
     ofile.write(create_hubs_outro)

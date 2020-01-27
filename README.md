@@ -28,9 +28,10 @@ The goal is to produce something visible, it takes many shortcuts. It only works
 
 ### Data Vault Metadata Design
 
-The *metadata columns* of the sats and hubs are designed for [the TEAM metadata of Roelant Vos](https://github.com/RoelantVos/TEAM). For a minimal approach see [Kent Graziano's "Data Vault 2.0 Modeling Basics"](https://www.vertabelo.com/blog/data-vault-series-data-vault-2-0-modeling-basics/)
+The *metadata columns* of the sats and hubs are designed for [the TEAM metadata of Roelant Vos](https://github.com/RoelantVos/TEAM). For a minimal approach with the columns required by Data Vault 2.0 see [Kent Graziano's "Data Vault 2.0 Modeling Basics"](https://www.vertabelo.com/blog/data-vault-series-data-vault-2-0-modeling-basics/)
 
-The *metadata for hub and sat generation* is a simplified version of what TEAM uses. For the full beauty see the github repository.
+The *metadata for hub and sat generation* is a simplified version of what TEAM uses. For the full beauty see the github repository (`ClassJsonHandling.cs`).
+
 
 ### Notes on the Code
 
@@ -60,7 +61,7 @@ For sample data and full data types:
 
 From here on, it's only a plan.
 
-9. Create link metadata, manually
+9. Create link metadata, manually. As a simplification, only links connecting two hubs are expected, without own data (no link satellites).
 9. Create links
 10. Create load hubs statements
 11. Create load links statements
@@ -89,4 +90,9 @@ snowflake datatypes are so simple ... delightful. It's all DATE, NUMBER, TEXT.
 
 The sample schema has some special features. The data is apperently generated randomly, so for every where clause, one row comes back. Also, i couldn't query the information query for the objects.
 
+### Known Issues
 
+* The code implicity relies on name conventions (names of hubs/links - their hash keys)
+* the generated code should be named _generated and gitignored
+* use try / except 
+* missing cleanup scripts (truncate / drop tables in playgrounds)
