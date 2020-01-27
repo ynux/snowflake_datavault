@@ -3,3 +3,5 @@ conf/config.ini
 env/
 *.swp
 **/__pycache__/**
+*.db
+**/*_generated.py

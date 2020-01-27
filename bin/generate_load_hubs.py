@@ -10,7 +10,7 @@ env = Environment(loader=file_loader)
 template = env.get_template('load_hubs.jinja2')
 
 # source-to-target-mapping
-source_target_mapping_csv = os.path.join(parent_dir, 'input', 'source_target_mappings', 'hub_mapping.csv')
+hub_mapping_csv = os.path.join(parent_dir, 'input', 'mappings', 'hub_mapping.csv')
 # output dir
 output_file = os.path.join(parent_dir, 'load_hub_generated.py')
 
@@ -23,7 +23,7 @@ with open(output_file, 'w') as ofile:
     ofile.truncate()
 
 with open(output_file, 'a') as ofile:
-    with open(source_target_mapping_csv, 'r') as ifile:
+    with open(hub_mapping_csv, 'r') as ifile:
         rows = DictReader(ifile)
         sql = template.render(rows=rows)
         ofile.write(sql)

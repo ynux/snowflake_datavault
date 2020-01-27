@@ -10,10 +10,9 @@ env = Environment(loader=file_loader)
 template = env.get_template('create_hubs.jinja2')
 
 # source-to-target-mapping
-source_target_mapping_csv = os.path.join(parent_dir, 'input', 'source_target_mappings', 'hub_mapping.csv')
+source_target_mapping_csv = os.path.join(parent_dir, 'input', 'mappings', 'hub_mapping.csv')
 table_column_csv = os.path.join(parent_dir, 'input', 'table_definitions', 'tab_col.csv')
-# output dir
-output_file = os.path.join(parent_dir, 'create_hubs.py')
+output_file = os.path.join(parent_dir, 'create_hubs_generated.py')
 
 sample_metadata = '''
 HUB_NAME,HUB_BUSINESS_KEY_DEFINITION,SOURCE_NAME,SOURCE_BUSINESS_KEY_DEFINITION

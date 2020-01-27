@@ -12,7 +12,7 @@ template = env.get_template('create_sat_metadata.jinja2')
 table_column_csv = os.path.join(parent_dir, 'input', 'table_definitions', 'tab_col.csv')
 
 # output dir
-output_file = os.path.join(parent_dir, 'input', 'source_target_mappings', 'sat_mapping_generated.csv')
+output_file = os.path.join(parent_dir, 'input', 'mappings', 'sat_mapping_generated.csv')
 
 
 sample_metadata = '''

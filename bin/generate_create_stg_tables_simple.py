@@ -3,7 +3,6 @@ import glob
 from jinja2 import FileSystemLoader, Environment
 from csv import DictReader
 
-
 # for testing
 sample_csv_data = '''
 tableA,colX,NUMBER,YES,,
@@ -19,8 +18,7 @@ template = env.get_template('create_stage_tables_simple.jinja2')
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 tabdef_file_pattern = os.path.join(parent_dir, 'input', 'table_definitions_simple', '*.csv')
 
-# output dir
-output_file = os.path.join(parent_dir, 'create_staging_tables.py')
+output_file = os.path.join(parent_dir, 'create_staging_tables_generated.py')
 create_staging_tables_intro = '''
 from sqlalchemy import MetaData, Table, Integer, String, Column, Boolean
 

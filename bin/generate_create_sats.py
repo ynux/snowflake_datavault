@@ -18,10 +18,9 @@ template_create_column = env.get_template('create_sats_column.jinja2')
 
 # find table definitions
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sat_metadata_csv = os.path.join(parent_dir, 'input', 'source_target_mappings', 'sat_mapping_generated.csv')
+sat_mapping_csv = os.path.join(parent_dir, 'input', 'mappings', 'sat_mapping_generated.csv')
 
-# output dir
-output_file = os.path.join(parent_dir, 'create_sats.py')
+output_file = os.path.join(parent_dir, 'create_sats_generated.py')
 create_sats_intro = '''
 from sqlalchemy import MetaData, Table, Numeric, String, Column, Boolean, Date
 
@@ -49,7 +48,7 @@ with open(output_file, 'w') as ofile:
 
 with open(output_file, 'a') as ofile:
     ofile.write(create_sats_intro)
-    with open(sat_metadata_csv, 'r') as ifile:
+    with open(sat_mapping_csv, 'r') as ifile:
         rows = DictReader(ifile)
         table = ''
         first_table = True

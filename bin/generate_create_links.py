@@ -10,12 +10,10 @@ env = Environment(loader=file_loader)
 template = env.get_template('create_links.jinja2')
 
 # source-to-target-mapping
-source_target_mapping_csv = os.path.join(parent_dir, 'input', 'source_target_mappings', 'link_mapping.csv')
+link_mapping_csv = os.path.join(parent_dir, 'input', 'mappings', 'link_mapping.csv')
 table_column_csv = os.path.join(parent_dir, 'input', 'table_definitions', 'tab_col.csv')
-hubmapping_csv = os.path.join(parent_dir, 'input', 'source_target_mappings', 'hub_mapping.csv')
+hub_mapping_csv = os.path.join(parent_dir, 'input', 'mappings', 'hub_mapping.csv')
 
-
-# output dir
 output_file = os.path.join(parent_dir, 'create_links_generated.py')
 
 sample_metadata = '''
@@ -105,13 +103,13 @@ def get_hubkey_datatype(hubdef_csv):
     return datatype_dict
 
 
-datatypes = get_hubkey_datatype(hubmapping_csv)
+datatypes = get_hubkey_datatype(hub_mapping_csv)
 buskeys = {}
 with open(source_target_mapping_csv, 'r') as ifile:
     rows = DictReader(ifile)
     for row in rows:
-        buskeys[row['FIRST_HUB']] = lookup_hub_businesskey(row['FIRST_HUB'], hubmapping_csv)
-        buskeys[row['SECOND_HUB']] = lookup_hub_businesskey(row['FIRST_HUB'], hubmapping_csv)
+        buskeys[row['FIRST_HUB']] = lookup_hub_businesskey(row['FIRST_HUB'], hub_mapping_csv)
+        buskeys[row['SECOND_HUB']] = lookup_hub_businesskey(row['FIRST_HUB'], hub_mapping_csv)
 
 with open(output_file, 'w') as ofile:
     ofile.truncate()

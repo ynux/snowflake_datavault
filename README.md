@@ -56,19 +56,16 @@ For sample data and full data types:
 3. generate create table statements for staging , and actually create them: `python bin/generate_create_stg_tables.py`,  `python ./create_staging_tables.py`
 5. load the staging tables with sample data `./load_stg.py`
 
-8. For the Hubs: Create a source-to-target mapping manually in `input/source_target_mappings/hub_mapping.csv`. Then generate statements to create hubs, and create them : `python bin/generate_create_hubs.py`, `python ./create_hubs.py`
+8. For the Hubs: Create a source-to-target mapping manually in `input/mappings/hub_mapping.csv`. Then generate statements to create hubs, and create them : `python bin/generate_create_hubs.py`, `python ./create_hubs.py`
 8. For the Satellites: generate or write metadata to create sats, then generate statements to create sats. Or generate metadata and change it manually. As the third and last step, create the satellite tables: `python bin/generate_sat_metadata.py; python bin/generate_create_sats.py; python create_sats.py` 
-
-From here on, it's only a plan.
-
 9. Create link metadata, manually. As a simplification, only links connecting two hubs are expected, without own data (no link satellites).
-9. Create links
-10. Create load hubs statements
-11. Create load links statements
-12. Create load sats statements
-13. Load hubs
-14. Load links
-15. Load sats
+9. Create links `./bin/generate_create_links.py; ./create_links_generated.py` 
+10. Create load hubs statements: `./bin/generate_load_hubs.py`
+11. Create load links statements TODO
+12. Create load sats statements TODO
+13. Load hubs - use sql in `load_hub_generated.py` (or write sqlalchemy code to run it)
+14. Load links TODO
+15. Load sats TODO
 
 ### Getting Sample Input Metadata
 
@@ -96,3 +93,4 @@ The sample schema has some special features. The data is apperently generated ra
 * the generated code should be named _generated and gitignored
 * use try / except 
 * missing cleanup scripts (truncate / drop tables in playgrounds)
+* no standard for date and time format before md5 hashing, or encoding
