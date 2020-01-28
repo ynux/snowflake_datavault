@@ -105,7 +105,7 @@ def get_hubkey_datatype(hubdef_csv):
 
 datatypes = get_hubkey_datatype(hub_mapping_csv)
 buskeys = {}
-with open(source_target_mapping_csv, 'r') as ifile:
+with open(link_mapping_csv, 'r') as ifile:
     rows = DictReader(ifile)
     for row in rows:
         buskeys[row['FIRST_HUB']] = lookup_hub_businesskey(row['FIRST_HUB'], hub_mapping_csv)
@@ -116,7 +116,7 @@ with open(output_file, 'w') as ofile:
 
 with open(output_file, 'a') as ofile:
     ofile.write(create_links_intro)
-    with open(source_target_mapping_csv, 'r') as ifile:
+    with open(link_mapping_csv, 'r') as ifile:
         rows = DictReader(ifile)
         table_sqlalch = template.render(rows=rows)
         ofile.write(table_sqlalch)

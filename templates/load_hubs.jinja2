@@ -2,7 +2,7 @@
 {%- set HubHashKey = row['HUB_NAME'][4:] + "_HSH" %}
 {%- set EtlInsertRunId = -1 %}
 {%- set BusKeys = row['HUB_BUSINESS_KEY_DEFINITION'].split('.') %}
-{%- set MD5SandedBKeys = "MD5('" + ("' || '^' || '").join(BusKeys) + "')" %}
+{%- set MD5SandedBKeys = "MD5(" + (" || '^' || ").join(BusKeys) + ")" %}
 {# For real use, have standard format of dates and times #}
 
 
