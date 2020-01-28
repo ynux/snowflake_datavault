@@ -1,4 +1,4 @@
-# Create a Data Vault from Metadata & Mapping, with Synthetic Data 
+# Create a Data Vault from Metadata & Mapping, with Synthetic or Sample Data 
 
 The idea for this project is to take some minimal input to build sqlalchemy code against Snowflake that creates and loads a data vault.
 
@@ -90,7 +90,9 @@ The sample schema has some special features. The data is apperently generated ra
 ### Known Issues
 
 * The code implicity relies on name conventions (names of hubs/links - their hash keys)
-* the generated code should be named _generated and gitignored
 * use try / except 
 * missing cleanup scripts (truncate / drop tables in playgrounds)
-* no standard for date and time format before md5 hashing, or encoding
+* no standard for date and time format before md5 hashing, or encoding, or to-charing
+* only very simple links 
+* no satellite loading yet
+* no foreign keys (hubs - sats, hubs - links)
