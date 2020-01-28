@@ -61,10 +61,10 @@ For sample data and full data types:
 9. Create link metadata, manually. As a simplification, only links connecting two hubs are expected, without own data (no link satellites).
 9. Create links `./bin/generate_create_links.py; ./create_links_generated.py` 
 10. Create load hubs statements: `./bin/generate_load_hubs.py`
-11. Create load links statements TODO
+11. Create load links statements: `./bin/generate_load_links.py`
 12. Create load sats statements TODO
 13. Load hubs - use sql in `load_hub_generated.py` (or write sqlalchemy code to run it)
-14. Load links TODO
+14. Load links: use sql in `load_links_generated.py`
 15. Load sats TODO
 
 ### Getting Sample Input Metadata
