@@ -1,26 +1,26 @@
 import configparser
-import os
 from sqlalchemy import create_engine, schema, exc
-
+from helpers import read_config
 
 def create_playground_schemas():
-    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    config_dir = os.path.join(parent_dir, 'conf')
-    configfile = os.path.join(config_dir, "config.ini")
-    config = configparser.ConfigParser()
-    config.read(configfile)
+
+    connection_params = read_config.read_config('metadata')
 
     engine = create_engine(
         'snowflake://{user}:{password}@{account}/{database}?warehouse={warehouse}'.format(
-            user=config['snowflake_credentials']['user'],
-            password=config['snowflake_credentials']['password'],
-            account=config['snowflake_connection']['account'],
-            database=config['playground']['database'],
-            warehouse=config['snowflake_connection']['warehouse']
+            user=connection_params['user'],
+            password=connection_params['password'],
+            account=connection_params['account'],
+            database=connection_params['database'],
+            warehouse=connection_params['warehouse']
         )
     )
 
-    for playground_schema in ['staging_schema', 'rawvault_schema', 'metadata_schema']:
+    metadata_schema = connection_params['schema']
+    rawvault_schema = read_config.read_config('rawvault')['schema']
+    staging_schema = read_config.read_config('staging')['schema']
+
+    for playground_schema in [metadata_schema, rawvault_schema, staging_schema]:
         try:
             engine.execute(schema.CreateSchema(playground_schema))
         except exc.ProgrammingError:

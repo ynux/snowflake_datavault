@@ -1,45 +1,49 @@
-# Create a Data Vault from Metadata & Mapping, with Synthetic or Sample Data 
+# Create a Data Vault from Metadata & Mapping, using Snwoflake Sample Data 
 
-The idea for this project is to take some minimal input to build sqlalchemy code against Snowflake that creates and loads a data vault.
+The idea of this project is to build a minimal raw data vault on top of a minimal Snwoflake Sample Database. It helped me to better understand which input, decisions and work building a raw vault involves. 
 
-The input is:
+To run it, you need access to the Snowflake Sample Database snowflake_sample_data.TPCH_SF1, and be able to create 3 schemas (staging, metadata, dv_rav)
 
-* source table metadata (table definitions with columns and data type) 
-* source to target mapping
+Many shortcuts are taking, and it only works under perfect conditions. The goal is to produce something visible with the least possible effort.
 
-The output is sqlalchemy scripts to create
+## The Input:
+
+* source schema metadata (table definitions with columns and data type) and data, from the sample db
+* source to target mapping, manual
+
+The output is sqlalchemy scripts to create 
 
 * staging tables
 * hubs
 * sats
 * links
 
-and to load them.
+and sql to load them.
 
-### Sample Input Metadata and Data
+## Design Decisions: Data Model
 
-This project uses Snowflake databases, and the sample database snowflake_sample_data.TPCH_SF1 .
-It can either create "stupid synthetic data", simply random strings / numbers and some fixed dates, without any logic or structure. Or load sample data (see below for details). 
+* only use required columns (nothing e.g. like a ETL_RUN_PID to support the ETL tool)
+* create one hub and satellite per staging table (no splitting of satellites or stuff)
+* no fancy data vault entities (self links, business vault, pit-tables, bridge tables etc)
+* no data in links ("link satellites")
+* hash merging for satellites (because the underlying staging data is stupid)
 
-### What to use this for
+## Design Decisions: Code
 
-Just practice, not real production - you should buy a tool.
-The goal is to produce something visible, it takes many shortcuts. It only works under perfect conditions.
-
-### Data Vault Metadata Design
-
-The *metadata columns* of the sats and hubs are designed for [the TEAM metadata of Roelant Vos](https://github.com/RoelantVos/TEAM). For a minimal approach with the columns required by Data Vault 2.0 see [Kent Graziano's "Data Vault 2.0 Modeling Basics"](https://www.vertabelo.com/blog/data-vault-series-data-vault-2-0-modeling-basics/)
-
-The *metadata for hub and sat generation* is a simplified version of what TEAM uses. For the full beauty see the github repository (`ClassJsonHandling.cs`).
-
-
-### Notes on the Code
-
+* put mapping metadata into snowflake (i would have liked to keep everything in csv, but some joining between mapping and table column metadata is needed)
+* rely on naming conventions (e.g. standard name for hub hash key)
 * written for python 3.7
-* install the requirements
+* install the requirements - mainly snowflake sqlalchemy and jinja. Using a virtualenv is recommended.
 * for tests, there should be a sqlite version. See load_stg.py for a stub.
+* sqlalchemy is abandoned when we get to the loading
 
-### How to use this
+## Sources
+
+* Kent Graziano
+* Dani Schnider
+* Roelant Vos
+
+## How to use this
 
 1. Prepare input metadata in `data/input/table_definitions.csv` (see below for examples)
 2. Establish connection to Snowflake `bin/connect_snowflake.py` (everything in config.ini is expected to exist)
