@@ -23,6 +23,11 @@ def read_config(target: str):
     elif target == 'metadata':
         database = config['databases_schemas']['playground_database']
         schema = config['databases_schemas']['metadata_schema']
+    elif target == 'source_informationschema':
+        database = config['databases_schemas']['source_database']
+        schema = 'information_schema'
+    else:
+        raise ValueError("unknown target {}".format(target))
 
     user = config['snowflake_credentials']['user']
     password = config['snowflake_credentials']['password']
@@ -68,11 +73,11 @@ def engine_sqlite(target):
 
 if __name__ == "__main__":
     configfile = os.path.join(config_dir, "config.ini.sample")
-    print(read_config('source'))
+    print(read_config('playground_informationschema'))
     # {'user': 'XXX', 'password': 'XXX', 'account': 'XXX.xxxregion', 
     # 'database': 'snowflake_sample_data', 'schema': 'TPCH_SF1', 'warehouse': 'xxx'}
     print(read_config('source'))
-    dialect = 'sqlite'
+    dialect = 'xxx'
     if dialect == 'snowflake':
         configfile = os.path.join(config_dir, "config.ini")
         engine = engine_snowflake('source')

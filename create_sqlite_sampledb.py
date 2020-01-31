@@ -11,6 +11,7 @@ def create_sample_tables(eng_src, eng_tgt):
         table = Table(table_name, metadata, autoload=True, autoload_with=eng_src)
         metadata.create_all(bind=eng_tgt, checkfirst=True)
 
+
 def fill_sample_tables(eng_src, eng_tgt, num_rows):
     metadata = MetaData()
     inspector = inspect(eng_src)
