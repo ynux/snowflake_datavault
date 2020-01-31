@@ -36,7 +36,7 @@ def read_config(target: str):
         "database": database,
         "schema": schema,
         "warehouse": warehouse
-        }
+    }
     return config_dict
 
 
@@ -55,21 +55,45 @@ def engine_snowflake(target):
     return engine
 
 
+def engine_sqlite(target):
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    engine = create_engine(
+        'sqlite:////{parent_dir}/{target}.db'.format(
+            parent_dir=parent_dir,
+            target=target
+        )
+    )
+    return engine
+
+
 if __name__ == "__main__":
     configfile = os.path.join(config_dir, "config.ini.sample")
     print(read_config('source'))
     # {'user': 'XXX', 'password': 'XXX', 'account': 'XXX.xxxregion', 
     # 'database': 'snowflake_sample_data', 'schema': 'TPCH_SF1', 'warehouse': 'xxx'}
-
-    # comes back with 4.2.1 and many warnings for me in Jan 2020
-    configfile = os.path.join(config_dir, "config.ini")
     print(read_config('source'))
-    engine = engine_snowflake('source')
-    try:
-        connection = engine.connect()
-        results = connection.execute('select current_version()').fetchone()
-        print(results[0])
-    finally:
-        connection.close()
-        engine.dispose()
- 
+    dialect = 'sqlite'
+    if dialect == 'snowflake':
+        configfile = os.path.join(config_dir, "config.ini")
+        engine = engine_snowflake('source')
+        try:
+            connection = engine.connect()
+            results = connection.execute('select current_version()').fetchone()
+            print(results[0])
+            # comes back with 4.2.1 and many warnings for me in Jan 2020
+        finally:
+            connection.close()
+            engine.dispose()
+    if dialect == 'sqlite':
+        engine = engine_sqlite('source')
+        print(engine.dialect.name)
+        try:
+            connection = engine.connect()
+            results = connection.execute('select sqlite_version();').fetchone()
+            print(results[0])
+            # comes back with 3.28.0 for me in Jan 2020, i expected 3.24.0
+        finally:
+            connection.close()
+            engine.dispose()
+
+    

@@ -30,11 +30,11 @@ and sql to load them.
 
 ## Design Decisions: Code
 
-* put mapping metadata into snowflake (i would have liked to keep everything in csv, but some joining between mapping and table column metadata is needed)
+* put mapping metadata into a database (i would have liked to keep everything in csv, but some joining between mapping and table column metadata is needed)
 * rely on naming conventions (e.g. standard name for hub hash key)
 * written for python 3.7
 * install the requirements - mainly snowflake sqlalchemy and jinja. Using a virtualenv is recommended.
-* for tests, there should be a sqlite version. See load_stg.py for a stub.
+* have a sqlite version (see 
 * sqlalchemy is abandoned when we get to the loading
 
 ## Sources
@@ -45,18 +45,14 @@ and sql to load them.
 
 ## How to use this
 
-1. Prepare input metadata in `data/input/table_definitions.csv` (see below for examples)
-2. Establish connection to Snowflake `bin/connect_snowflake.py` (everything in config.ini is expected to exist)
-
-For synthetic data and simple data types (String without CHARACTER_MAXIMUM_LENGTH etc.):
-
+1. Establish connection to Snowflake `bin/connect_snowflake.py` 
+2. Create schemas (./create_schemas.py)
+3. Create mapping for hubs and links (manually)
+4. Create and fill metadata tables
 3. generate create table statements for staging `bin/generate_create_stg_tables_simple.py`
 4. run the create table script `./create_staging_tables_simple.py`
 5. generate the load table statements for staging `bin/generate_load_stg_tables_simple.py`
 6. Fill the staging tables with random data `./load_staging_tables_simple.py`
-
-For sample data and full data types:
-
 3. generate create table statements for staging , and actually create them: `python bin/generate_create_stg_tables.py`,  `python ./create_staging_tables.py`
 5. load the staging tables with sample data `./load_stg.py`
 
@@ -90,6 +86,9 @@ snowflake datatypes are so simple ... delightful. It's all DATE, NUMBER, TEXT.
 ### Remark on Snowflake's Sample DB
 
 The sample schema has some special features. The data is apperently generated randomly, so for every where clause, one row comes back. Also, i couldn't query the information query for the objects.
+
+There are now primary or foreign keys in the sample db, but keys have the suffix `_key`. For a diagram, see [Snowflake Documentation, Sample Data: TPC-H](https://docs.snowflake.net/manuals/user-guide/sample-data-tpch.html)
+
 
 ### Known Issues
 

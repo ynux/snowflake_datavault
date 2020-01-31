@@ -1,18 +1,18 @@
 from sqlalchemy import MetaData, Table, String, Column, select
-from sqlalchemy.sql import text
 from bin import helpers
 
 
 def create_metadata_tables(eng):
+    ''' drop and create metadata tables for datavault creation '''
     metadata = MetaData()
 
-    schemas = Table('SCHEMAS', metadata, 
-        Column('DATABASE', String, nullable=False, primary_key=True),
-        Column('SCHEMA', String, nullable=False),
+    schemas = Table('SCHEMAS', metadata,
+        Column('SCHEMA', String, nullable=False, primary_key=True),
+        Column('DATABASE', String, nullable=False),
         Column('ROLE', String, nullable=True)
     )
 
-    hub_mappings = Table('HUB_MAPPINGS', metadata, 
+    hub_mappings = Table('HUB_MAPPINGS', metadata,
         Column('HUB_NAME', String, nullable=False, primary_key=True),
         Column('SOURCE_NAME', String, nullable=False)
     )
@@ -22,16 +22,16 @@ def create_metadata_tables(eng):
         Column('HUB_NAME', String, nullable=False)
     )
 
-    link_mappings = Table('LINK_MAPPINGS', metadata, 
-        Column('LINK_NAME', String, nullable=False, primary_key=True),
-        Column('HUB', String, nullable=False)
+    link_mappings = Table('LINK_MAPPINGS', metadata,
+        Column('LINK_NAME', String, nullable=False),
+        Column('HUB_NAME', String, nullable=False)
     )
 
     # no satellite mappings presently, because those are generated automatically
     # one per source table, with no attributes changed or excluded
     # introduce it when changes are needed
-
-    metadata.create_all(eng)
+    metadata.drop_all(eng)
+    metadata.create_all(eng, checkfirst=False)
 
 
 def fill_metadata_schemas(eng):
@@ -40,15 +40,20 @@ def fill_metadata_schemas(eng):
     schemas = Table('SCHEMAS', metadata, autoload=True, autoload_with=eng)
     connection.execute(schemas.delete())
     for role in ['metadata', 'source', 'staging', 'rawvault']:
-        conn_conf = helpers.read_config(role)
-        values = [
-            {
-                'database': conn_conf['database'],
-                'schema': conn_conf['schema'],
-                'role': role
+        if engine.dialect.name == 'sqlite':
+            val = {
+                'DATABASE': 'None',
+                'SCHEMA': role,
+                'ROLE': role
             }
-        ]
-        connection.execute(schemas.insert().values(values))
+        if engine.dialect.name == 'snowflake':
+            conn_conf = helpers.read_config(role)
+            val = {
+                'DATABASE': conn_conf['database'],
+                'SCHEMA': conn_conf['schema'],
+                'ROLE': role
+            }
+        connection.execute(schemas.insert().values(val))
 
 
 def create_metadata_views(eng):
@@ -100,8 +105,9 @@ def create_metadata_views(eng):
 
 
 if __name__ == "__main__":
-    engine = helpers.engine_snowflake('metadata')
-    #create_metadata_tables(engine)
+    # engine = helpers.engine_snowflake('metadata')
+    engine = helpers.engine_sqlite('metadata')
+    create_metadata_tables(engine)
     fill_metadata_schemas(engine)
     create_metadata_views(engine)
     engine.dispose()
