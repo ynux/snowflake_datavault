@@ -16,9 +16,9 @@ HUB_PARTSUPP,PS_PARTKEY.PS_SUPPKEY,PARTSUPP
 '''
 
 sample_link_csv = '''
-LINK_NAME,HUB_NAMES
-LNK_CUSTOMER_LINEITEM,HUB_CUSTOMER.HUB_LINEITEM
-LNK_PART_LINEITEM,HUB_PART.HUB_LINEITEM
+LINK_NAME,HUB_NAME,KEY
+LNK_PART_LINEITEM,HUB_PART,P_PARTKEY
+LNK_PART_LINEITEM,HUB_LINEITEM,L_PARTKEY
 '''
 
 def insert_hub_mappings(eng):
@@ -54,11 +54,7 @@ def insert_link_mappings(eng):
         link_mapping_values = {}
         rows = DictReader(ifile)
         for row in rows:
-            link_mapping_values['LINK_NAME'] = row['LINK_NAME']
-            hubdef = row['HUB_NAMES']
-            for hub in hubdef.split('.'):
-                link_mapping_values['HUB_NAME'] = hub
-                connection.execute(link_mappings.insert().values(link_mapping_values))
+            connection.execute(link_mappings.insert().values(row))
 
 
 if __name__ == "__main__":

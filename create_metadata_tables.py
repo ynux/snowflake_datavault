@@ -25,7 +25,8 @@ def create_metadata_tables(eng):
 
     link_mappings = Table('LINK_MAPPINGS', metadata,
         Column('LINK_NAME', String, nullable=False),
-        Column('HUB_NAME', String, nullable=False)
+        Column('HUB_NAME', String, nullable=False),
+        Column('KEY', String, nullable=False)
     )
 
     # no satellite mappings presently, because those are generated automatically
@@ -101,56 +102,14 @@ def fill_metadata_columns(eng_src, eng_tgt):
         connection_tgt.execute(columns_dtypes.insert().values(valdict))
 
 
-def create_metadata_views(eng):
-    metadata = MetaData()
-    conn = eng.connect()
-    # get databases and schemas
-    metadata = MetaData()
-    schemas = Table('SCHEMAS', metadata, autoload=True, autoload_with=eng)
-    get_dbs_schemas = select([schemas])
-    dbs_schemas = conn.execute(get_dbs_schemas).fetchall()
-    create_view = '''
-    CREATE VIEW {RV_SCHEMA}.hub_mapping_full (
-        HUB_SCHEMA_NAME,
-        HUB_NAME,
-        HUB_BUSINESS_KEY_DEFINITION,
-        SOURCE_SCHEMA_NAME,
-        SOURCE_NAME,
-        BUSINESS_KEY,
-    AS ( SELECT 
-            '{RV_SCHEMA}',
-            hub_cols.HUB_NAME,
-            hub_cols.HUB_BUSINESS_KEY,
-            '{SRC_SCHEMA}',
-            hub_maps.SOURCE_NAME,
-            cols.DATA_TYPE,
-            cols.CHARACTER_MAXIMUM_LENGTH,
-            cols.NUMERIC_PRECISION,
-            cols.NUMERIC_SCALE
-        FROM 
-            {MTD_SCHEMA}.hub_business_keys hub_cols
-            JOIN {MTD_SCHEMA}.column_dtypes cols
-            ON hub_cols.HUB_BUSINESS_KEY = cols.column_name
-            JOIN {MTD_SCHEMA}.hub_mappings hub_maps
-            ON hub_cols.hub_name = hub_maps.hub_name
-            AND hub_maps.source_name = cols.table_name
-    '''.format(
-        RV_SCHEMA='DV_RAV',
-        SRC_SCHEMA='TPCH_SF1',
-        MTD_SCHEMA='DV_MTD'
-    )
-
-    print(create_view)
-
 
 if __name__ == "__main__":
     # engine = helpers.engine_snowflake('metadata')
     engine_target = helpers.engine_sqlite('metadata')
-    # engine_source = helpers.engine_snowflake('source_informationschema')
-    # create_metadata_tables(engine_target)
-    # fill_metadata_schemas(engine_target)
-    # fill_metadata_columns(engine_source, engine_target)
-    create_metadata_views(engine_target)
+    engine_source = helpers.engine_snowflake('source_informationschema')
+    create_metadata_tables(engine_target)
+    fill_metadata_schemas(engine_target)
+    fill_metadata_columns(engine_source, engine_target)
     engine_target.dispose()
-    # engine_source.dispose()
+    engine_source.dispose()
 
