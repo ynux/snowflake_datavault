@@ -1,41 +1,47 @@
-# Create a Data Vault from Metadata & Mapping, using Snwoflake Sample Data 
+# Create a Minimal Data Vault from Metadata & Mapping, using Snowflake Sample Data 
 
-The idea of this project is to build a minimal raw data vault on top of a minimal Snwoflake Sample Database. It helped me to better understand which input, decisions and work building a raw vault involves. 
+The idea of this project is to build a minimal raw data vault on top of a very simple Snwoflake Sample Database. It helped me to better understand which input, decisions and work building a raw vault involves. 
 
-To run it, you need access to the Snowflake Sample Database snowflake_sample_data.TPCH_SF1, and be able to create 3 schemas (staging, metadata, dv_rav)
+To run it, you need access to the Snowflake Sample Database snowflake_sample_data.TPCH_SF1, and be able to create 3 schemas (staging, metadata, dv_rav). There is an alternative SQLite version.
 
-Many shortcuts are taking, and it only works under perfect conditions. The goal is to produce something visible with the least possible effort.
+Many shortcuts are taken, and the code only works under perfect conditions. The goal is to produce something visible with the least possible effort. It is highly unsophisticated and definitely not meant for real life usage. The best it can hope for is making a more informed decision when building or chosing the real thing. 
 
 ## The Input:
 
-* source schema metadata (table definitions with columns and data type) and data, from the sample db
-* source to target mapping, manual
+* the sample database (table and column definitions, and some data), or the sqlite "source" and "metadata" databases
+* source to target mapping for the hubs and links, manual
 
-The output is sqlalchemy scripts to create 
+The output is sqlalchemy scripts or SQL to create and load
 
 * staging tables
 * hubs
 * sats
 * links
 
-and sql to load them.
-
 ## Design Decisions: Data Model
 
-* only use required columns (nothing e.g. like a ETL_RUN_PID to support the ETL tool)
-* create one hub and satellite per staging table (no splitting of satellites or stuff)
-* no fancy data vault entities (self links, business vault, pit-tables, bridge tables etc)
+* only use Data Vault 2.0 required columns in hubs / sats / links (no columns like an ETL_RUN_PID to support the ETL tool. For an example for such columns, see Roelant Vos's posts.)
+* create one hub and satellite per staging table (no splitting of satellites or the like)
+* no fancy data vault entities (self links, business vault, pit-tables, bridge tables)
 * no data in links ("link satellites")
 * hash merging for satellites (because the underlying staging data is stupid)
 
-## Design Decisions: Code
+## Design Decisions: Code and Metadata
 
-* put mapping metadata into a database (i would have liked to keep everything in csv, but some joining between mapping and table column metadata is needed)
+* put mapping metadata into a database
 * rely on naming conventions (e.g. standard name for hub hash key)
 * written for python 3.7
 * install the requirements - mainly snowflake sqlalchemy and jinja. Using a virtualenv is recommended.
 * have a sqlite version (see 
 * sqlalchemy is abandoned when we get to the loading
+
+General remark: There is a range of choices where to put meta information. You can have metadata, naming conventions or put information into tables, possibly into special columns. For the hash key, you can rely on naming convention, or put it into a metadata lookup table. For the source-to-target-naming, I don't think that a naming convention will work since you have no control over the source systems. Still, after the first load, the source will be in the tables, so you could drop the metadata. However, we want to easily recreate everything from the beginning, so the metadata is persisted in a small metadata database.
+
+Why is the metadata in database tables and not in csv files? Because there will be joins to get the datatypes, and joining csv is ugly.
+
+I aim at keeping the manually written mappings minimal. 
+
+A note on the choice of business keys: In our simplistic example, the columns prefixed with `_key` are chosen as business keys. This part of the mapping could be done automatically in this case. Also, if the source has primary keys defined in the metadata, those could be used. However, this would again not work if you decided to use a business key that isn't the source system's primary key. This is highly recommended because it gives you the freedom to switch the source, which probably was the reason why you chose the data vault model in the first case. Overall, it is very realistic to have humans decide the business key, so it is part of the manual mapping.
 
 ## Sources
 
@@ -45,6 +51,7 @@ and sql to load them.
 
 ## How to use this
 
+0. Prepare the config `./conf/config.ini`
 1. Establish connection to Snowflake `bin/connect_snowflake.py` 
 2. Create schemas (./create_schemas.py)
 3. Create mapping for hubs and links (manually)
@@ -55,7 +62,6 @@ and sql to load them.
 6. Fill the staging tables with random data `./load_staging_tables_simple.py`
 3. generate create table statements for staging , and actually create them: `python bin/generate_create_stg_tables.py`,  `python ./create_staging_tables.py`
 5. load the staging tables with sample data `./load_stg.py`
-
 8. For the Hubs: Create a source-to-target mapping manually in `input/mappings/hub_mapping.csv`. Then generate statements to create hubs, and create them : `python bin/generate_create_hubs.py`, `python ./create_hubs.py`
 8. For the Satellites: generate or write metadata to create sats, then generate statements to create sats. Or generate metadata and change it manually. As the third and last step, create the satellite tables: `python bin/generate_sat_metadata.py; python bin/generate_create_sats.py; python create_sats.py` 
 9. Create link metadata, manually. As a simplification, only links connecting two hubs are expected, without own data (no link satellites).
@@ -67,10 +73,16 @@ and sql to load them.
 14. Load links: use sql in `load_links_generated.py`
 15. Load sats TODO
 
+#### SQLite version
+
+The required data is in ... xxx
+
+CSV version?
+
 ### Getting Sample Input Metadata
 
 For the full column definition:
-
+xxx superceded by sqlite thingy
 ```
 use database snowflake_sample_data;
 
@@ -92,10 +104,8 @@ There are now primary or foreign keys in the sample db, but keys have the suffix
 
 ### Known Issues
 
-* The code implicity relies on name conventions (names of hubs/links - their hash keys)
 * use try / except 
 * missing cleanup scripts (truncate / drop tables in playgrounds)
 * no standard for date and time format before md5 hashing, or encoding, or to-charing
-* only very simple links 
 * no satellite loading yet
 * no foreign keys (hubs - sats, hubs - links)
