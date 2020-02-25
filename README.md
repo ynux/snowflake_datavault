@@ -51,9 +51,11 @@ A note on the choice of business keys: In our simplistic example, the columns pr
 
 ## How to use this
 
+Prepare environment: : Create virtualenv, e.g. `virtualenv env -p python3; source env/bin/activate`(Recommended but not strictly needed.) Install dependencies with `pip install -r requirement.txt`
+
 0. Prepare the config `./conf/config.ini`
-1. Establish connection to Snowflake `bin/connect_snowflake.py` 
-2. Create schemas (./create_schemas.py)
+1. Establish connection to Snowflake `python bin/helpers.py`
+2. Create schemas `python create_schemas.py`
 3. Create mapping for hubs and links (manually)
 4. Create and fill metadata tables
 3. generate create table statements for staging `bin/generate_create_stg_tables_simple.py`
@@ -72,6 +74,10 @@ A note on the choice of business keys: In our simplistic example, the columns pr
 13. Load hubs - use sql in `load_hub_generated.py` (or write sqlalchemy code to run it)
 14. Load links: use sql in `load_links_generated.py`
 15. Load sats TODO
+
+## How to get rid of this (in snowflake)
+
+Remove schemas (metadata, raw vault, staging): `python drop_schemas.py`
 
 #### SQLite version
 

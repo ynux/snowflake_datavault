@@ -11,7 +11,9 @@ def read_config(target: str):
     config = configparser.ConfigParser()
     config.read(configfile)
 
-    if target == 'source':
+    if target == 'db_dialect':
+        dialect = config['db']['dialect']
+    elif target == 'source':
         database = config['databases_schemas']['source_database']
         schema = config['databases_schemas']['source_schema']
     elif target == 'staging':
@@ -34,14 +36,19 @@ def read_config(target: str):
     account = config['snowflake_connection']['account']
     warehouse = config['snowflake_connection']['warehouse']
 
-    config_dict = {
-        "user": user,
-        "password": password,
-        "account": account,
-        "database": database,
-        "schema": schema,
-        "warehouse": warehouse
-    }
+    if target == 'db_dialect':
+        config_dict = {
+            "dialect": dialect
+        }
+    else: 
+        config_dict = {
+            "user": user,
+            "password": password,
+            "account": account,
+            "database": database,
+            "schema": schema,
+            "warehouse": warehouse
+        }
     return config_dict
 
 
@@ -77,7 +84,7 @@ if __name__ == "__main__":
     # {'user': 'XXX', 'password': 'XXX', 'account': 'XXX.xxxregion', 
     # 'database': 'snowflake_sample_data', 'schema': 'TPCH_SF1', 'warehouse': 'xxx'}
     print(read_config('source'))
-    dialect = 'snowflake'
+    dialect = read_config('db_dialect')['dialect']
     if dialect == 'snowflake':
         configfile = os.path.join(config_dir, "config.ini")
         engine = engine_snowflake('source')
