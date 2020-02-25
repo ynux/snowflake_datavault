@@ -73,11 +73,11 @@ def engine_sqlite(target):
 
 if __name__ == "__main__":
     configfile = os.path.join(config_dir, "config.ini.sample")
-    print(read_config('playground_informationschema'))
+    print(read_config('source_informationschema'))
     # {'user': 'XXX', 'password': 'XXX', 'account': 'XXX.xxxregion', 
     # 'database': 'snowflake_sample_data', 'schema': 'TPCH_SF1', 'warehouse': 'xxx'}
     print(read_config('source'))
-    dialect = 'xxx'
+    dialect = 'snowflake'
     if dialect == 'snowflake':
         configfile = os.path.join(config_dir, "config.ini")
         engine = engine_snowflake('source')
@@ -85,7 +85,7 @@ if __name__ == "__main__":
             connection = engine.connect()
             results = connection.execute('select current_version()').fetchone()
             print(results[0])
-            # comes back with 4.2.1 and many warnings for me in Jan 2020
+            # comes back with 4.6.1 and many warnings for me in Feb 2020
         finally:
             connection.close()
             engine.dispose()
