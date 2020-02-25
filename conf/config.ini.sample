@@ -1,3 +1,6 @@
+[db]
+dialect = snowflake
+
 [snowflake_credentials] 
 user = XXX
 password = XXX
