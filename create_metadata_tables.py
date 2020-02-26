@@ -104,8 +104,11 @@ def fill_metadata_columns(eng_src, eng_tgt):
 
 
 if __name__ == "__main__":
-    # engine = helpers.engine_snowflake('metadata')
-    engine_target = helpers.engine_sqlite('metadata')
+    dialect = helpers.read_config('db_dialect')['dialect']
+    if dialect == 'snowflake':
+        engine_target = helpers.engine_snowflake('metadata')
+    else:
+        engine_target = helpers.engine_sqlite('metadata')
     engine_source = helpers.engine_snowflake('source_informationschema')
     create_metadata_tables(engine_target)
     fill_metadata_schemas(engine_target)
