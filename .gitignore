@@ -7,3 +7,5 @@ env/
 **/*_generated.py
 build/
 dist/
+.DS_Store
+*.egg-info/
