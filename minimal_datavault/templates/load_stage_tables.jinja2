@@ -1,0 +1,13 @@
+{%- for row in rows -%}
+{%- set random_data = row['data_type'] | 
+    replace("DATE", "base_date") |
+    replace("TEXT", "randomString(10)") |
+    replace("NUMBER", "random.randint(1, 100)") 
+%}
+{%- if loop.index == 1 %}
+    if table == '{{ row['table'] }}':
+        synth_data = {
+{%-endif%}
+            '{{ row['column'] | lower }}': {{ random_data }}{{ "," if not loop.last else  "\n        }"}}
+{%-endfor%}
+

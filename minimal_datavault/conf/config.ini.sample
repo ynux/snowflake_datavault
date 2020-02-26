@@ -1,0 +1,18 @@
+[db]
+dialect = sqlite
+
+[snowflake_credentials] 
+user = XXX
+password = XXX
+
+[snowflake_connection] 
+account = XXX.xxxregion
+warehouse = xxx
+
+[databases_schemas]
+source_database = snowflake_sample_data
+source_schema = TPCH_SF1
+playground_database = test_db
+staging_schema = DV_STG
+rawvault_schema = DV_RAV
+metadata_schema = DV_MTD

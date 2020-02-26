@@ -1,0 +1,12 @@
+{%- for row in rows %}
+    {{ row['HUB_NAME'] | lower }} = Table('{{ row['HUB_NAME'] }}', metadata, 
+        Column('{{ row['HUB_NAME'][4:] }}_HSH', String(32), nullable=False, primary_key=True),
+        Column('LOAD_DATETIME', Date, nullable=False),
+        Column('RECORD_SOURCE', String, nullable=False),
+        Column('ETL_INSERT_RUN_ID', Numeric(38,0), nullable=True),
+        {%-for buskey in row['HUB_BUSINESS_KEY_DEFINITION'].split('.') %} 
+        {#- lookup inside lookup doesn't seem to work, move datatype lookup to outside jinja, like sat columns #}
+        Column('{{ buskey }}', Numeric(38,0), nullable=False){{ "," if not loop.last else "\n    )" }}
+    {%-endfor%}
+{%-endfor%}
+
