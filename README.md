@@ -43,6 +43,15 @@ I aim at keeping the manually written mappings minimal.
 
 A note on the choice of business keys: In our simplistic example, the columns prefixed with `_key` are chosen as business keys. This part of the mapping could be done automatically in this case. Also, if the source has primary keys defined in the metadata, those could be used. However, this would again not work if you decided to use a business key that isn't the source system's primary key. This is highly recommended because it gives you the freedom to switch the source, which probably was the reason why you chose the data vault model in the first case. Overall, it is very realistic to have humans decide the business key, so it is part of the manual mapping.
 
+#### Metadata tables
+
+SCHEMAS
+HUB_MAPPINGS
+HUB_BUSINESS_KEYS
+LINK_MAPPINGS
+COLUMN_DTYPES
+
+
 ## Sources
 
 * Kent Graziano

@@ -5,3 +5,5 @@ env/
 **/__pycache__/**
 *.db
 **/*_generated.py
+build/
+dist/

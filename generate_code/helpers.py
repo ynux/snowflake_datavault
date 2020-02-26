@@ -80,11 +80,9 @@ def engine_sqlite(target):
 
 
 if __name__ == "__main__":
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    config_dir = os.path.join(parent_dir, 'conf')
     configfile = os.path.join(config_dir, "config.ini.sample")
-    print(read_config('source_informationschema'))
-    # {'user': 'XXX', 'password': 'XXX', 'account': 'XXX.xxxregion', 
-    # 'database': 'snowflake_sample_data', 'schema': 'TPCH_SF1', 'warehouse': 'xxx'}
-    print(read_config('source'))
     dialect = read_config('db_dialect')['dialect']
     if dialect == 'snowflake':
         configfile = os.path.join(config_dir, "config.ini")

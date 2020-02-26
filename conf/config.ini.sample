@@ -1,5 +1,5 @@
 [db]
-dialect = snowflake
+dialect = sqlite
 
 [snowflake_credentials] 
 user = XXX
