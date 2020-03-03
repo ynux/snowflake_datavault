@@ -1,26 +1,17 @@
 import os
 from jinja2 import FileSystemLoader, Environment
-from csv import DictReader
 
-
-# for testing
-sample_csv_data = '''
-TABLE_NAME,COLUMN_NAME,IS_NULLABLE,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,NUMERIC_PRECISION,NUMERIC_SCALE
-CUSTOMER,C_MKTSEGMENT,YES,TEXT,10,,
-CUSTOMER,C_ACCTBAL,NO,NUMBER,,12,2
-'''
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+output_file = os.path.join(parent_dir, 'create_staging_tables_generated.py')
 
 # jinja templates
-file_loader = FileSystemLoader('./templates')
+template_dir = os.path.join(parent_dir, 'templates')
+file_loader = FileSystemLoader(template_dir)
 env = Environment(loader=file_loader)
 template_create_table = env.get_template('create_stage_tables_table.jinja2')
 template_create_column = env.get_template('create_stage_tables_column.jinja2')
 
-# find table definitions
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-table_column_csv = os.path.join(parent_dir, 'input', 'table_definitions', 'tab_col.csv')
 
-output_file = os.path.join(parent_dir, 'create_staging_tables_generated.py')
 create_staging_tables_intro = '''
 from sqlalchemy import MetaData, Table, Numeric, String, Column, Boolean, Date
 
@@ -43,16 +34,17 @@ if __name__ == "__main__":
     engine.dispose()
 
 '''
-with open(output_file, 'w') as ofile:
-    ofile.truncate()
 
-with open(output_file, 'a') as ofile:
-    ofile.write(create_staging_tables_intro)
-    with open(table_column_csv, 'r') as ifile:
-        rows = DictReader(ifile)
+
+def write_create_staging_tables(metadata_rows):
+    with open(output_file, 'w') as ofile:
+        ofile.truncate()
+
+    with open(output_file, 'a') as ofile:
+        ofile.write(create_staging_tables_intro)
         table = ''
         first_table = True
-        for row in rows:
+        for row in metadata_rows:
             if row['TABLE_NAME'] != table:
                 table_sqlalch_tab = template_create_table.render(row=row, first_table=first_table)
                 first_table = False
@@ -60,5 +52,4 @@ with open(output_file, 'a') as ofile:
                 table = row['TABLE_NAME']
             table_sqlalch_col = template_create_column.render(row=row)
             ofile.write(table_sqlalch_col)
-    ofile.write(create_staging_tables_outro)
-
+        ofile.write(create_staging_tables_outro)

@@ -1,2 +1,0 @@
-ILLUSTRATION,IllustrationID,int,YES,"Primary key for Illustration records. Identity / Auto increment column"
-ILLUSTRATION,Diagram,xml,NO,"Illustrations used in manufacturing instructions. Stored as XML."

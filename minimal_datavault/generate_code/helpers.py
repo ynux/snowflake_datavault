@@ -2,13 +2,10 @@ import configparser
 import os
 from sqlalchemy import create_engine
 
-# from generate_code import config_dir
-
 
 def read_config(target: str, config_ini='config.ini'):
     parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     config_dir = os.path.join(parent_dir, 'conf')
-    #config_dir = "/Users/skim/Documents/eon/synthetic_data_vault/minimal_datavault/conf"
     configfile = os.path.join(config_dir, config_ini)
 
     config = configparser.ConfigParser()
@@ -43,7 +40,7 @@ def read_config(target: str, config_ini='config.ini'):
         config_dict = {
             "dialect": dialect
         }
-    else: 
+    else:
         config_dict = {
             "user": user,
             "password": password,
@@ -108,6 +105,3 @@ if __name__ == "__main__":
         finally:
             connection.close()
             engine.dispose()
-            # you might want to remove the empty source.db file afterwards
-
-    

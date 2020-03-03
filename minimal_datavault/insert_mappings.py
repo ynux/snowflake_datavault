@@ -1,7 +1,7 @@
 from sqlalchemy import insert, Table, MetaData
 import os
 from csv import DictReader
-from bin import helpers
+from generate_code import helpers
 
 # files
 present_dir = os.path.dirname(os.path.abspath(__file__))
@@ -58,9 +58,13 @@ def insert_link_mappings(eng):
 
 
 if __name__ == "__main__":
-    # engine = helpers.engine_snowflake('metadata')
-    engine = helpers.engine_sqlite('metadata')
-    insert_hub_mappings(engine)
-    insert_link_mappings(engine)
-    engine.dispose()
+
+    dialect = helpers.read_config('db_dialect')['dialect']
+    if dialect == 'snowflake':
+        engine_target = helpers.engine_snowflake('metadata')
+    else:
+        engine_target = helpers.engine_sqlite('metadata')
+    insert_hub_mappings(engine_target)
+    insert_link_mappings(engine_target)
+    engine_target.dispose()
 

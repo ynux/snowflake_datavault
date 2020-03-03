@@ -2,8 +2,7 @@ from sqlalchemy import MetaData, Table, String, Column, select, Numeric
 from sqlalchemy import create_engine
 from sqlalchemy.engine import reflection
 from sqlalchemy.sql import text
-from bin import helpers
-
+from generate_code import helpers
 
 def create_metadata_tables(eng):
     ''' drop and create metadata tables for datavault creation '''
@@ -39,9 +38,9 @@ def create_metadata_tables(eng):
         Column('COLUMN_NAME', String, nullable=True),
         Column('IS_NULLABLE', String(3), nullable=True),
         Column('DATA_TYPE', String, nullable=True),
-        Column('CHARACTER_MAXIMUM_LENGTH', Numeric(38), nullable=True),
-        Column('NUMERIC_PRECISION', Numeric(38), nullable=True),
-        Column('NUMERIC_SCALE', Numeric(38), nullable=True)
+        Column('CHARACTER_MAXIMUM_LENGTH', String, nullable=True),
+        Column('NUMERIC_PRECISION', String, nullable=True),
+        Column('NUMERIC_SCALE', String, nullable=True)
     )
 
     metadata.drop_all(eng)
@@ -52,7 +51,7 @@ def fill_metadata_schemas(eng):
     connection = eng.connect()
     metadata = MetaData()
     schemas = Table('SCHEMAS', metadata, autoload=True, autoload_with=eng)
-    insp = reflection.Inspector.from_engine(engine)
+    insp = reflection.Inspector.from_engine(eng)
     connection.execute(schemas.delete())
     for role in ['metadata', 'source', 'staging', 'rawvault']:
         conn_conf = helpers.read_config(role)
@@ -105,7 +104,6 @@ def fill_metadata_columns(eng_src, eng_tgt):
         connection_tgt.execute(columns_dtypes.insert().values(valdict))
 
 
-
 if __name__ == "__main__":
     dialect = helpers.read_config('db_dialect')['dialect']
     if dialect == 'snowflake':
@@ -113,9 +111,9 @@ if __name__ == "__main__":
     else:
         engine_target = helpers.engine_sqlite('metadata')
     engine_source = helpers.engine_snowflake('source_informationschema')
-    #create_metadata_tables(engine_target)
+    create_metadata_tables(engine_target)
     fill_metadata_schemas(engine_target)
-    #fill_metadata_columns(engine_source, engine_target)
+    fill_metadata_columns(engine_source, engine_target)
     engine_target.dispose()
     engine_source.dispose()
 

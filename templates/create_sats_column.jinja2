@@ -1,5 +1,0 @@
-{# prepare variables #}
-{%- set target_attribute_name = row['TARGET_ATTRIBUTE_NAME_DATATYPE'].split(':')[0] -%}
-{%- set target_attribute_type = row['TARGET_ATTRIBUTE_NAME_DATATYPE'].split(':')[1] -%}
-,
-        Column('{{ target_attribute_name }}', {{ target_attribute_type }}, nullable=True)

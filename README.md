@@ -62,11 +62,14 @@ COLUMN_DTYPES
 
 Prepare environment: : Create virtualenv, e.g. `virtualenv env -p python3; source env/bin/activate`(Recommended but not strictly needed.) Install dependencies with `pip install -r requirement.txt`
 
+using sqlite as target db, snowflake as source:
+
 0. Prepare the config `./conf/config.ini`
-1. Establish connection to Snowflake `python bin/helpers.py`
-2. Create schemas `python create_schemas.py`
-3. Create mapping for hubs and links (manually)
-4. Create and fill metadata tables
+1. Establish connection to Snowflake `python minimal_datavault/generate_code/helpers.py`
+2. snowflake: Create schemas `python create_schemas.py`
+3. Create and fill metadata tables: `python3 minimal_datavault/create_fill_metadata_tables.py`, `python3 minimal_datavault/insert_mappings.py`. The result is a sqlite db `sqlite_dbs/metadata.db` with filled tables COLUMN_DTYPES, HUB_MAPPINGS, SCHEMAS, HUB_BUSINESS_KEYS, LINK_MAPPINGS    
+
+
 3. generate create table statements for staging `bin/generate_create_stg_tables_simple.py`
 4. run the create table script `./create_staging_tables_simple.py`
 5. generate the load table statements for staging `bin/generate_load_stg_tables_simple.py`
