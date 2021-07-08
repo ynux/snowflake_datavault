@@ -1,4 +1,4 @@
-conf/config.ini
+**/config.ini
 .vscode/
 env/
 *.swp
